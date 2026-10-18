@@ -1,0 +1,79 @@
+/* The Storyboard's and Clips' cards as buttons, the scene viewer and the Preview (0024). */
+
+/* ---------------------------------------------------------------- cards */
+button.board-media { display: block; width: 100%; padding: 0; border: 0; font: inherit; color: inherit; cursor: zoom-in; }
+button.board-media:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.media-tag.tag-draft, .media-tag.tag-raw { background: color-mix(in srgb, var(--wait) 80%, black); }
+.media-tag.tag-no-clip-yet { background: rgb(0 0 0 / 0.45); font-weight: 500; }
+.board-card.no-clip .board-media img { opacity: 0.45; filter: grayscale(0.6); }
+.motion-line { margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ---------------------------------------------------------------- scene viewer */
+.scene .scene-frame { width: min(100%, 1560px); max-height: 100%; }
+.scene-body { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--s3); min-height: 0; }
+.scene-main { min-width: 0; }
+.scene-stage { position: relative; min-height: 240px; background: rgb(0 0 0 / 0.35); border-radius: var(--r-md); overflow: hidden; }
+.scene-stage .lb-media { max-height: calc(100vh - 260px); }
+.scene-empty { padding: var(--s6); }
+.scene-steps { padding: 4px; border-radius: var(--r-md); background: rgb(255 255 255 / 0.08); }
+.scene-steps .button { color: #f2f2f2; border-color: rgb(255 255 255 / 0.18); background: transparent; }
+.scene-steps .button:disabled { color: rgb(255 255 255 / 0.35); border-color: transparent; }
+.scene-steps .button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.scene-details { color: #ddd; }
+.scene-details summary { cursor: pointer; }
+.scene-side { background: var(--surface); color: var(--ink); border-radius: var(--r-lg); padding: var(--s3); overflow: auto; max-height: calc(100vh - 140px); }
+.scene-side details.redo summary { font-weight: 600; margin-bottom: var(--s2); }
+.scene-side textarea { min-height: 0; font-size: var(--t-sm); }
+.scene .link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; text-align: left; }
+.version-group { border-top: 1px solid var(--line); padding-top: var(--s2); display: flex; flex-direction: column; gap: var(--s2); }
+.version-group.shown .link { color: var(--accent-ink); }
+.versions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s2); }
+.version { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--raised); color: var(--ink); cursor: pointer; text-align: left; font: inherit; }
+.version.picked { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-line); }
+.version img, .version .no-picture { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--r-sm); background: var(--sunken); }
+.version-icon { position: absolute; top: 8px; left: 8px; color: #fff; background: rgb(0 0 0 / 0.55); border-radius: 4px; display: grid; place-items: center; padding: 2px; }
+.version-icon .svg { width: 12px; height: 12px; }
+.wipe { position: relative; width: 100%; user-select: none; }
+.wipe img { display: block; width: 100%; max-height: calc(100vh - 260px); object-fit: contain; }
+.wipe .wipe-before { position: absolute; inset: 0; height: 100%; }
+.wipe-label { position: absolute; top: 8px; padding: 2px 8px; border-radius: 6px; background: rgb(0 0 0 / 0.6); color: #fff; font-size: var(--t-xs); font-weight: 600; }
+.wipe-label.left { left: 8px; }
+.wipe-label.right { right: 8px; }
+.wipe-slider { position: absolute; left: 0; right: 0; bottom: 8px; width: calc(100% - 16px); margin: 0 8px; accent-color: var(--accent); }
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); }
+.side-by-side figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.side-media { width: 100%; max-height: calc(100vh - 300px); object-fit: contain; background: #000; border-radius: var(--r-sm); }
+@media (max-width: 1000px) {
+  .scene-body { grid-template-columns: 1fr; }
+  .scene-side { max-height: none; }
+}
+
+/* ---------------------------------------------------------------- preview */
+.preview { display: flex; flex-direction: column; gap: var(--s3); }
+.pv-screen { position: relative; display: block; width: 100%; max-height: 70vh; padding: 0; border: 0; border-radius: var(--r-md); overflow: hidden; background: #000; cursor: zoom-in; }
+.pv-picture, .pv-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: none; }
+.pv-screen[data-kind="frame"] .pv-picture { display: block; }
+.pv-screen[data-kind="finished"] .pv-video, .pv-screen[data-kind="raw"] .pv-video { display: block; }
+.pv-blank { position: absolute; inset: 0; display: none; place-content: center; gap: var(--s2); padding: var(--s6); color: #bbb; text-align: center; }
+.pv-screen[data-kind="none"] .pv-blank { display: grid; }
+.pv-screen .media-tag { left: auto; right: 8px; top: 8px; bottom: auto; }
+.pv-screen[data-kind="raw"] .media-tag { background: color-mix(in srgb, var(--wait) 80%, black); }
+.pv-lyric { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); max-width: 90%; padding: 4px 12px; border-radius: 6px; background: rgb(0 0 0 / 0.55); color: #fff; font-size: var(--t-lg); line-height: 1.4; }
+.pv-lyric:empty { display: none; }
+.pv-lane { position: relative; height: 28px; background: var(--sunken); border-radius: var(--r-sm); overflow: hidden; }
+.pv-shot { position: absolute; top: 0; bottom: 0; padding: 0; border: 0; border-right: 1px solid var(--surface); cursor: pointer; }
+.pv-finished { background: var(--good); }
+.pv-raw { background: color-mix(in srgb, var(--good) 45%, var(--sunken)); }
+.pv-frame { background: var(--accent); }
+.pv-none { background: var(--line-strong); }
+.legend .swatch.pv-finished { background: var(--good); }
+.legend .swatch.pv-raw { background: color-mix(in srgb, var(--good) 45%, var(--sunken)); }
+.legend .swatch.pv-frame { background: var(--accent); }
+.legend .swatch.pv-none { background: var(--line-strong); }
+
+/* The Scenes view's board and scene viewer (0030 §1): the item panel of Hone Frame on its surface. */
+.frame-scene-body .scene-main { background: var(--surface); color: var(--ink); border-radius: var(--r-lg); overflow: auto; max-height: calc(100vh - 140px); }
+.frame-scene-body .scene-side .beat { margin: 0; }
+.scene-board { padding: var(--s3) 0; }
+.board.subjects { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.subject-card .board-body { gap: 4px; }

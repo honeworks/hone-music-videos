@@ -1,0 +1,226 @@
+# hone-music-video's own hone-models registry entries (design §3.2, decisions D-008, D-022).
+#
+# Merged over hone-models' packaged catalog and under `./hone-models.toml` of the folder the library runs
+# in, so a project may override any key. Workflow paths are relative to this file. The frame's pictures
+# (0027) are local models only, as Hone Frame's are.
+
+# The planners (lyrics, the frame plan): Claude Opus 5.5 through an OpenAI-compatible gateway. The
+# key comes from OPENAI_COMPATIBLE_API_KEY (the environment or a git-ignored .env); OPENAI_COMPATIBLE_BASE_URL may replace the
+# URL. Prices are Anthropic's list prices, so the recorded cost is an estimate of the gateway's. A whole-song shot
+# plan is long (tens of thousands of tokens): with `speed_tok_s` the request's timeout is
+# min(max_timeout_s, 2 * max_tokens / speed) = min(1800, 3200) = 1800 s; without it a hosted model gets
+# 120 s. 40 tokens/s is conservative: the real plan measured 47.8 (D-028).
+[models."claude-opus-5-5"]
+provider = "openai_compatible"
+kind = "chat"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+defaults = { max_tokens = 64000 }
+max_timeout_s = 1800.0
+[models."claude-opus-5-5".capabilities]
+vision = true
+thinking = true
+max_input_tokens = 1000000
+max_output_tokens = 128000
+speed_tok_s = 40.0  # assumed until measured (`hone-models models check` measures it)
+price = { input_per_mtok = 4.0, output_per_mtok = 20.0 }
+license = "Anthropic commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+
+# The start-frame check of new projects (`models.quality`, design §10.3; D-110): Claude Sonnet 5.5
+# through the OpenAI-compatible gateway, the same gateway and key. It found the wrong characters and the objects out of the
+# story's world that Haiku missed (D-110). One vision call over contact sheets per round.
+[models."claude-sonnet-5-5"]
+provider = "openai_compatible"
+kind = "chat"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+defaults = { max_tokens = 32000 }
+max_timeout_s = 900.0
+[models."claude-sonnet-5-5".capabilities]
+vision = true
+thinking = true
+max_input_tokens = 1000000
+max_output_tokens = 128000
+speed_tok_s = 60.0  # assumed until measured (`hone-models models check` measures it)
+price = { input_per_mtok = 2.0, output_per_mtok = 10.0 }
+license = "Anthropic commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+
+# Claude Haiku 5.5 (0015, D-086): the cheapest judge, kept for projects that choose it; it misses wrong
+# characters and objects out of the story's world (D-089, D-110).
+[models."claude-haiku-5-5"]
+provider = "openai_compatible"
+kind = "chat"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+defaults = { max_tokens = 32000 }
+max_timeout_s = 600.0
+[models."claude-haiku-5-5".capabilities]
+vision = true
+thinking = true
+max_input_tokens = 1000000
+max_output_tokens = 128000
+speed_tok_s = 100.0  # assumed until measured (`hone-models models check` measures it)
+price = { input_per_mtok = 0.10, output_per_mtok = 0.50 }  # prompts up to 100K tokens
+license = "Anthropic commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+
+# Portraits and start frames: Qwen-Image-Edit 2511 (Q4_K_M GGUF) with lightx2v's 4-step Lightning LoRA
+# (~141 s a 1024x576 still on the 8 GB GPU, as good as the 8-step LoRA; history). The Multiple-Angles
+# LoRA is loaded at strength 0 (the trial's proven graph). Up to three references.
+[models."qwen-image-edit-2511-4step"]
+provider = "comfyui"
+kind = "image"
+workflow = "workflows/qwen-image-edit-2511-4step.json"
+outputs = ["40"]
+defaults = { size = "1024x1024", steps = 4, cfg = 1.0 }
+max_timeout_s = 3600.0
+[models."qwen-image-edit-2511-4step".capabilities]
+max_references = 3
+vram_gb = 7.6  # near the whole card, as hone-frame sets it: the GPU scheduler unloads others first
+license = "Apache-2.0"
+commercial_use = true
+[models."qwen-image-edit-2511-4step".inputs]
+prompt = "20.prompt"
+negative = "21.prompt"
+seed = "31.seed"
+steps = "31.steps"
+cfg = "31.cfg"
+lora_strength = "2.strength_model"
+lightning = "7.strength_model"
+references = ["11.image", "12.image", "13.image"]
+width = "30.width"
+height = "30.height"
+
+# Every picture of a new project (0021): Qwen-Image-2.1 (int8) with the Turbo LoRA, 8 steps at cfg 1, the
+# int8 Qwen3-VL 8B encoder. Ten reference slots (the encoder's image_1..image_10, each also VAE-encoded);
+# hone-models drops an empty slot with its links, so the same entry draws from text alone. At most six
+# are sent, each read at about 768x768 (`ref_resolution`): more references cost time, not memory (7.0 to
+# 7.5 GB peak), ~50 s a 1024x576 scene with four. Research and evaluation only (the Qwen research license).
+[models."qwen-image-2.1-turbo"]
+provider = "comfyui"
+kind = "image"
+workflow = "workflows/qwen-image-2.1-turbo.json"
+outputs = ["9"]
+defaults = { size = "1024x1024", steps = 8, cfg = 1.0, ref_resolution = 768 }
+max_timeout_s = 3600.0
+[models."qwen-image-2.1-turbo".capabilities]
+max_references = 6
+# the sizes hone-models' catalog lists for it (its feat/model-guides-for-frame): the frame checks a size (0027)
+sizes = ["256x256", "512x512", "768x768", "1024x1024", "1328x1328", "1024x576", "576x1024", "1280x720", "720x1280", "1344x768", "768x1344", "1664x928", "928x1664", "1024x768", "768x1024", "1152x864", "864x1152", "1216x832", "832x1216", "1536x1024", "1024x1536", "1152x896", "896x1152", "704x880", "832x1248", "1536x640", "640x1536", "2048x1024"]
+vram_gb = 7.6
+license = "Qwen research license"
+commercial_use = false
+[models."qwen-image-2.1-turbo".install]
+source = "https://huggingface.co/Comfy-Org/Qwen-Image-2.1"
+files = [
+  { repo = "Comfy-Org/Qwen-Image-2.1", file = "diffusion_models/qwen_image_2.1_int8_convrot.safetensors", to = "diffusion_models" },
+  { repo = "Comfy-Org/Qwen-Image-2.1", file = "text_encoders/qwen3vl_8b_int8_convrot.safetensors", to = "text_encoders" },
+  { repo = "Comfy-Org/Qwen-Image-2.1", file = "vae/qwen_image_2.1_vae_bf16.safetensors", to = "vae" },
+  { repo = "Comfy-Org/Qwen-Image-2.1", file = "loras/qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors", to = "loras" },
+]
+[models."qwen-image-2.1-turbo".inputs]
+prompt = "5.prompt"
+seed = "7.seed"
+steps = "7.steps"
+cfg = "7.cfg"
+ref_resolution = "5.resolution"
+width = "6.width"
+height = "6.height"
+references = ["20.image", "21.image", "22.image", "23.image", "24.image", "25.image", "26.image", "27.image", "28.image", "29.image"]
+
+# Word times (design §6): Whisper through the OpenAI-compatible gateway, called by the in-library client until hone-models has
+# hosted transcription (its change 0019; D-002, D-017, D-018).
+[models."whisper-1"]
+provider = "openai_compatible"
+kind = "transcription"
+model = "whisper-1"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+[models."whisper-1".capabilities]
+license = "OpenAI commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+word_timestamps = true
+
+# Other speech models on the OpenAI-compatible gateway, the same request shape and reply (`verbose_json` words; D-048): ElevenLabs'
+# Scribe and Groq's Whisper large-v3. Compared with whisper-1 on the owner's song (design/history/0001).
+[models."scribe_v1"]
+provider = "openai_compatible"
+kind = "transcription"
+model = "scribe_v1"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+[models."scribe_v1".capabilities]
+license = "ElevenLabs commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+word_timestamps = true
+
+[models."scribe_v2"]
+provider = "openai_compatible"
+kind = "transcription"
+model = "scribe_v2"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+[models."scribe_v2".capabilities]
+license = "ElevenLabs commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+word_timestamps = true
+
+[models."groq.whisper-large-v3"]
+provider = "openai_compatible"
+kind = "transcription"
+model = "groq.whisper-large-v3"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+[models."groq.whisper-large-v3".capabilities]
+license = "Groq commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+word_timestamps = true
+
+[models."groq.whisper-large-v3-turbo"]
+provider = "openai_compatible"
+kind = "transcription"
+model = "groq.whisper-large-v3-turbo"
+base_url_env = "OPENAI_COMPATIBLE_BASE_URL"
+api_key_env = "OPENAI_COMPATIBLE_API_KEY"
+[models."groq.whisper-large-v3-turbo".capabilities]
+license = "Groq commercial terms, through the OpenAI-compatible gateway"
+commercial_use = true
+word_timestamps = true
+
+# Clips (design §11.1): Wan 2.2 I2V 14B fp8 with lightx2v's 4-step LoRA on both experts (the trial's
+# "fast" setup): hone-models' packaged entry with the library's copy of its workflow, so a change in the
+# catalog cannot move the node ids. The stage sends `duration_s` = (frames - 1) / 16, which the entry
+# turns back into exactly `frames` (ceil(ms * 16 / 1000) + 1, 33 to 129: 8 s is the tested maximum), and
+# `size` 832x480, or 960x544 for faces up to 110 frames (longer ones and 1280x720 do not fit 8 GB, D-082).
+# A ComfyUI the library starts for its session runs with --use-sage-attention (22% faster; the adapter,
+# D-033): ComfyUI's Python needs the `sageattention` package. A ComfyUI already running is used as it is.
+[models."wan2.2-i2v-14b"]
+workflow = "workflows/wan2.2-i2v-14b.json"
+defaults = { size = "832x480", duration_s = 5 }
+max_timeout_s = 7200.0
+[models."wan2.2-i2v-14b".capabilities]
+license = "Apache-2.0"
+commercial_use = true
+max_duration_s = 8
+vram_gb = 7.6  # measured peak 7.7 GB for the whole GPU (design §15): it needs the whole card
+
+# The finish (design §11.3, D-032): Real-ESRGAN x2plus (BSD-3) frame by frame, Lanczos to the output size
+# (`size`, 1920x1080 for 16:9 at 1080), then RIFE 4.9 x2 (16 -> 32 fps), in one ComfyUI job per clip.
+# Needs ComfyUI-Frame-Interpolation and models/upscale_models/RealESRGAN_x2plus.pth.
+[models."esrgan-rife-x2"]
+provider = "comfyui"
+kind = "video"
+workflow = "workflows/esrgan-rife-x2.json"
+outputs = ["5"]
+defaults = { size = "1920x1080" }
+max_timeout_s = 3600.0
+[models."esrgan-rife-x2".capabilities]
+vram_gb = 2.0  # measured 1.6 GB peak for the whole GPU (design §15)
+license = "BSD-3-Clause (Real-ESRGAN), MIT (RIFE)"
+commercial_use = true
+[models."esrgan-rife-x2".inputs]
+video = "1.file"
+width = "8.width"
+height = "8.height"

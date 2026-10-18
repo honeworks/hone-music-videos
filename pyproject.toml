@@ -1,0 +1,130 @@
+[project]
+name = "hone-music-video"
+dynamic = ["version"]
+description = "Song in, music video out: timed lyrics, a planned cast and shot list, consistent characters, start frames and clips generated on local models, assembled to the millisecond, with a web dashboard."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Bahman Shadmehr", email = "info@bshadmehr.me" }]
+keywords = ["ai", "generative-ai", "music-video", "image-to-video", "lyrics", "honeworks"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.7",
+    "hone-flow>=0.1",      # runs, gates, resume (design/decisions.md D-001)
+    "hone-models>=0.1",    # every model call (D-001)
+    "numpy>=1.26",         # the sheet cutter finds figures (D-020)
+    "pillow>=10.4",        # the sheet cutter reads, crops and writes pictures (D-020)
+    "tomlkit>=0.12",       # the frame's project file written back with its comments and order (0027)
+]
+
+[project.optional-dependencies]
+# the third listen isolates the vocals of a slice of the song on the CPU (design/decisions.md D-041)
+separate = ["demucs>=4.1", "torch>=2.5; sys_platform != 'darwin' or platform_machine != 'x86_64'"]
+# lyrics given by the owner are timed by forced alignment to the vocals, on the CPU (design/changes/0005)
+align = [
+    "torch>=2.11; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "torchaudio>=2.11,<2.12; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "uroman>=1.3",
+]
+
+[project.scripts]
+hone-music-video = "hone_music_video.cli:main"
+
+[dependency-groups]
+# Development tools (PEP 735): installed by `uv sync`, never published as an extra.
+dev = [
+    "pytest>=8", "pytest-cov>=5", "pytest-timeout>=2.3", "hypothesis>=6.100",
+    "ruff>=0.6", "pyright>=1.1.380",
+]
+
+[tool.uv.sources]
+# Development and CI only (the published metadata keeps `hone-flow>=0.1` ...): take the siblings from
+# GitHub until they are on PyPI (design/decisions.md D-001).
+hone-flow = { git = "https://github.com/honeworks/hone-flow", branch = "main" }
+hone-models = { git = "https://github.com/honeworks/hone-models", branch = "main" }
+# the `separate` extra runs on the CPU (D-041): development and CI take torch's CPU build, not CUDA's
+torch = { index = "pytorch-cpu" }
+torchaudio = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[project.urls]
+Homepage = "https://github.com/honeworks/hone-music-videos"
+Repository = "https://github.com/honeworks/hone-music-videos"
+Issues = "https://github.com/honeworks/hone-music-videos/issues"
+Changelog = "https://github.com/honeworks/hone-music-videos/blob/main/CHANGELOG.md"
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/hone_music_video/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hone_music_video"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/", "tests/", "docs/", "examples/", "design/", "README.md", "CONTRIBUTING.md", "AGENTS.md", "LICENSE",
+    "CHANGELOG.md", "pyproject.toml",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests"]
+extend-exclude = ["design"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PT", "N", "S", "C4", "DTZ", "PL", "C90"]
+ignore = ["PLR0913", "PLR2004"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"src/hone_music_video/errors.py" = ["N818"]   # exception names are public API, named for what happened
+"tests/**" = ["S101", "S603", "PLR0915", "PLC0415", "PLW1510", "PT018"]
+"examples/**" = ["S101", "S603", "PLW1510"]
+"scripts/**" = ["S603", "S607", "T201"]   # dev scripts run fixed tools and print
+
+[tool.pyright]
+include = ["src", "tests"]
+strict = ["src"]
+pythonVersion = "3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m 'not gpu and not ollama and not comfyui and not hosted and not separate and not align'"
+timeout = 120
+markers = [
+    "e2e: acceptance-case tests (run by default)",
+    "gpu: needs the shared GPU; run via scripts/gpu-lock.sh",
+    "ollama: needs a running Ollama",
+    "comfyui: needs ComfyUI",
+    "hosted: needs a hosted API key",
+    "separate: runs Demucs on the CPU (the separate extra; downloads its weights once)",
+    "align: runs the MMS forced aligner on the CPU (the align extra; downloads its weights, 1.2 GB, once)",
+    "slow: slower than 5 s",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src/hone_music_video"]
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload", "\\.\\.\\."]

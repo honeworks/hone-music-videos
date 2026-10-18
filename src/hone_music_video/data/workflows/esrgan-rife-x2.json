@@ -1,0 +1,89 @@
+{
+  "1": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "hone/clip.mp4"
+    }
+  },
+  "2": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "1",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "UpscaleModelLoader",
+    "inputs": {
+      "model_name": "RealESRGAN_x2plus.pth"
+    }
+  },
+  "7": {
+    "class_type": "ImageUpscaleWithModel",
+    "inputs": {
+      "upscale_model": [
+        "6",
+        0
+      ],
+      "image": [
+        "2",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "7",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1920,
+      "height": 1080,
+      "crop": "disabled"
+    }
+  },
+  "3": {
+    "class_type": "RIFE VFI",
+    "inputs": {
+      "ckpt_name": "rife49.pth",
+      "clear_cache_after_n_frames": 10,
+      "multiplier": 2,
+      "fast_mode": false,
+      "ensemble": true,
+      "scale_factor": 1.0,
+      "dtype": "float16",
+      "torch_compile": false,
+      "batch_size": 1,
+      "frames": [
+        "8",
+        0
+      ]
+    }
+  },
+  "4": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": 32,
+      "images": [
+        "3",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "hone/esrgan-rife-x2",
+      "format": "auto",
+      "format.codec": "auto",
+      "video": [
+        "4",
+        0
+      ]
+    }
+  }
+}

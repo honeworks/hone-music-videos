@@ -1,0 +1,48 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+permissions: { contents: read }
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: { python: ["3.11", "3.12", "3.13"] }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+        with: { python-version: "${{ matrix.python }}", enable-cache: true }
+      # The `measure` stage reads the song with ffprobe (design §2.1); the tests measure real WAV files.
+      - run: command -v ffprobe || (sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg)
+      # Every extra and the dev dependency group (installed by default).
+      - run: uv sync --all-extras --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+      # Default suite only: pyproject's addopts deselect the gpu / ollama / comfyui / hosted / separate / align markers.
+      - run: uv run pytest --cov --cov-fail-under=90
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: uv build
+      - name: Smoke test the wheel in a clean env
+        run: |
+          uv venv "$RUNNER_TEMP/smoke"
+          # the honeworks siblings are not on PyPI yet: their git sources first (design/decisions.md D-002)
+          mapfile -t SIBLINGS < <(python3 scripts/git-sources.py)
+          if [ "${#SIBLINGS[@]}" -gt 0 ]; then uv pip install --python "$RUNNER_TEMP/smoke/bin/python" "${SIBLINGS[@]}"; fi
+          uv pip install --python "$RUNNER_TEMP/smoke/bin/python" dist/*.whl
+          "$RUNNER_TEMP/smoke/bin/python" -c "import hone_music_video; print(hone_music_video.__version__)"
+          if [ -f examples/quickstart.py ]; then   # the README quickstart, with only the wheel installed
+            cd "$RUNNER_TEMP" && "$RUNNER_TEMP/smoke/bin/python" "$GITHUB_WORKSPACE/examples/quickstart.py"
+          fi
+      - uses: actions/upload-artifact@v7
+        with: { name: dist, path: dist/ }

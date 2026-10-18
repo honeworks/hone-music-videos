@@ -1,0 +1,15 @@
+/* The bell (0016): the banner when a project waits for the owner, the mute toggle and "Enable sound". */
+.row.tight { gap: 2px; }
+.icon-button[aria-pressed="true"] { color: var(--wait); }
+.enable-sound:empty { display: none; }
+.button.small-button { padding: 4px 10px; font-size: var(--t-xs); width: 100%; }
+.bell-banner { position: fixed; top: var(--s3); left: 0; right: 0; margin: 0 auto; z-index: 25; width: min(640px, calc(100vw - 2 * var(--s4)));
+  display: flex; align-items: flex-start; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-lg);
+  background: var(--wait-soft); color: var(--ink); border: 1px solid color-mix(in srgb, var(--wait) 45%, transparent); box-shadow: var(--shadow-2);
+  animation: rise var(--slow) var(--ease); }
+.bell-banner[hidden] { display: none; }
+.bell-banner .gate-icon .svg { animation: swing 1.25s ease-in-out infinite; transform-origin: 50% 10%; }
+.bell-banner a { font-weight: 600; }
+@keyframes swing { 0%, 60%, 100% { transform: rotate(0); } 15% { transform: rotate(14deg); } 35% { transform: rotate(-12deg); } }
+@media (max-width: 820px) { .enable-sound { order: 3; } .button.small-button { width: auto; } }
+.brand-name { white-space: nowrap; }

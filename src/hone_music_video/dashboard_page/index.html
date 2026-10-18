@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hone music video</title>
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/views.css">
+  <link rel="stylesheet" href="/live.css">
+  <link rel="stylesheet" href="/bell.css">
+  <link rel="stylesheet" href="/options.css">
+  <link rel="stylesheet" href="/decide.css">
+  <link rel="stylesheet" href="/scenes.css">
+  <link rel="stylesheet" href="/frame/frame.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Projects">
+      <div class="sidebar-head">
+        <a class="brand" href="#/" aria-label="hone music video, all projects">
+          <span class="brand-logo" id="brand-logo"></span>
+          <span class="brand-name"><b>hone</b> music video</span>
+        </a>
+        <span class="row tight">
+          <button type="button" class="icon-button" id="sound" aria-pressed="false" aria-label="Mute the approval bell"></button>
+          <button type="button" class="icon-button" id="theme" aria-label="Switch between light and dark theme"></button>
+        </span>
+      </div>
+      <div id="enable-sound" class="enable-sound"></div>
+      <a href="#/new" class="button primary block" id="new-video" data-nav="new"></a>
+      <nav class="sidebar-section" aria-label="Your videos">
+        <a class="sidebar-label" href="#/" data-nav="projects">Videos</a>
+        <ul class="project-list" id="project-list"></ul>
+      </nav>
+      <p class="sidebar-foot">Runs on this machine · 127.0.0.1</p>
+    </aside>
+    <main id="main" tabindex="-1"></main>
+  </div>
+  <div id="bell" class="bell-banner" role="alert" hidden></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div class="hf layer"><!-- the Scenes view's toasts and dialog (Hone Frame's, 0027) -->
+    <div id="frame-toasts" class="toasts" aria-live="polite"></div>
+    <dialog id="frame-dialog" class="dialog" aria-labelledby="dialog-title"></dialog>
+  </div>
+</body>
+</html>

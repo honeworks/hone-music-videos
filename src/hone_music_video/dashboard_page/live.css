@@ -1,0 +1,77 @@
+/* Live progress (0003): progress bars, the light motion on what is being made, the viewer.
+   The motion animates only opacity and transform (cheap for the GPU), runs only on the items in
+   progress, and stops under prefers-reduced-motion (the labels stay). */
+
+/* ---------------------------------------------------------------- progress */
+.progress-detail { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; font-size: var(--t-xs); }
+.progress-detail .bar { margin-top: 0; }
+.progress-detail.overall { padding: var(--s3); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--raised); margin: 0 0 var(--s3); }
+.now-card .progress-detail.overall { margin: 0; }
+.progress-line { display: flex; justify-content: space-between; gap: var(--s2); flex-wrap: wrap; color: var(--ink-2); }
+.progress-line strong { font-weight: 600; color: var(--ink); }
+.progress-meta { display: flex; flex-wrap: wrap; gap: 2px var(--s3); color: var(--muted); }
+.progress-panel { display: flex; flex-direction: column; gap: var(--s2); }
+.progress-panel .progress-detail { font-size: var(--t-sm); }
+.progress-panel .progress-detail.overall { margin: var(--s2) 0 0; }
+.bar.thin { height: 3px; margin-top: 4px; }
+.bar span { position: relative; overflow: hidden; }
+.bar.working span::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent); transform: translateX(-100%); animation: sweep 2s ease-in-out infinite; will-change: transform; }
+.card-progress { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.card-progress .bar { margin-top: 2px; }
+.card-progress > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------------------------------------------------------------- what is being made */
+.media-tag { position: absolute; left: 6px; bottom: 6px; z-index: 2; display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 6px; background: rgb(0 0 0 / 0.6); color: #fff; font-size: var(--t-xs); font-weight: 600; }
+.board-media .media-tag { left: auto; right: 6px; }
+.working-label { color: var(--accent-ink); }
+.media-tag.working-label { color: #fff; }
+.working-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; animation: pulse 1.8s ease-in-out infinite; }
+.media-tag .working-dot { background: #fff; }
+.board-card { position: relative; }
+.board-card.working::before { content: ""; position: absolute; inset: 0; z-index: 3; border: 2px solid var(--accent); border-radius: inherit; pointer-events: none; animation: pulse 2.2s ease-in-out infinite; }
+.board-card.failed { border-color: color-mix(in srgb, var(--bad) 55%, var(--line)); }
+.character-picture { position: relative; }
+.board-media.working::after, .character-picture.working::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--accent) 28%, transparent) 50%, transparent 70%); transform: translateX(-100%); animation: sweep 2.4s ease-in-out infinite; will-change: transform; }
+.board-media .no-picture { min-height: 0; }
+@keyframes sweep { to { transform: translateX(100%); } }
+
+/* ---------------------------------------------------------------- open in the viewer */
+.zoomable { cursor: zoom-in; }
+.zoom-box { position: relative; display: inline-block; flex: none; }
+.zoom-box > img { display: block; }
+.frame, .character-picture { position: relative; }
+.shot-still .zoom-box, .character-picture .zoom-box { display: block; width: 100%; height: 100%; }
+.shot-still .zoom-box img { width: 100%; height: 100%; object-fit: cover; }
+.pack-views .zoom-box, .given .zoom-box { display: block; }
+.take-item .zoom-box { width: 72px; }
+.zoom-button { position: absolute; top: 6px; left: 6px; z-index: 4; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 7px; display: grid; place-items: center; background: rgb(0 0 0 / 0.55); color: #fff; cursor: pointer; opacity: 0; transition: opacity var(--fast) var(--ease); }
+.zoom-button .svg { width: 14px; height: 14px; }
+.zoomable:hover > .zoom-button, .zoom-button:focus-visible { opacity: 1; }
+@media (hover: none) { .zoom-button { opacity: 0.85; } }
+.take-row .zoom-button, .take-item .zoom-button { width: 22px; height: 22px; top: 4px; left: 4px; }
+body.lb-open { overflow: hidden; }
+.lightbox { position: fixed; inset: 0; z-index: 30; background: rgb(6 6 10 / 0.86); display: grid; place-items: center; padding: var(--s4); animation: rise var(--slow) var(--ease); }
+.lb-frame { display: flex; flex-direction: column; gap: var(--s2); width: min(100%, 1400px); max-height: 100%; }
+.lb-stage { min-height: 0; display: grid; place-items: center; }
+.lb-media { width: 100%; height: auto; max-height: calc(100vh - 2 * var(--s4) - 64px); object-fit: contain; border-radius: var(--r-md); background: #000; }
+.lb-bar { display: flex; align-items: center; gap: var(--s2); padding: var(--s2) var(--s3); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-lg); }
+.lb-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t-sm); }
+@media (max-width: 820px) {
+  .lb-bar { flex-wrap: wrap; }
+  .lb-label { order: -1; flex-basis: 100%; white-space: normal; }
+  .lb-bar .button.ghost { margin-right: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *::after, .working-dot, .board-card.working::before { animation: none !important; }
+  .bar.working span::after, .board-media.working::after, .character-picture.working::after { display: none; }
+}
+
+/* ---------------------------------------------------------------- unattended runs (0004) */
+.pill.auto { background: var(--accent-soft); color: var(--accent-ink); }
+.switch, .switch-row { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--t-sm); color: var(--ink-2); cursor: pointer; }
+.switch input, .switch-row input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; flex: none; }
+.switch-row { display: flex; align-items: flex-start; gap: var(--s3); }
+.switch-row input { margin-top: 3px; }
+.switch-row .hint { display: block; font-size: var(--t-xs); color: var(--muted); margin-top: 2px; }
+.auto-stopped { padding: var(--s2) var(--s3); border-radius: var(--r-md); background: var(--wait-soft); color: var(--wait); }

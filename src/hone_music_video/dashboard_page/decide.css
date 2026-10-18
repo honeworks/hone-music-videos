@@ -1,0 +1,24 @@
+/* A gate's controls (0018): the note box, Approve and "Reject with note" side by side, the question asked
+   when Approve is pressed with a note written; the owner's timing of the lyrics' lines. */
+
+.gate-controls { display: flex; flex-direction: column; gap: var(--s2); flex-basis: 100%; min-width: 0; }
+.gate-note { width: 100%; resize: vertical; min-height: 3.2em; }
+.gate-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.gate-controls > p { margin: 0; }
+
+.note-dialog { max-width: min(520px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); color: var(--ink); padding: var(--s4); box-shadow: var(--shadow-1); }
+.note-dialog::backdrop { background: rgb(0 0 0 / 0.45); }
+.note-dialog h3 { margin: 0 0 var(--s2); }
+
+.button.small { padding: 3px 9px; font-size: var(--t-xs); }
+.lyric-line-wrap { display: flex; align-items: center; gap: var(--s1, 4px); }
+.lyric-line-wrap > .lyric-line { flex: 1; min-width: 0; }
+.timing-toggle.on { color: var(--accent); background: var(--accent-soft); }
+.timing-mark { margin-left: var(--s2); vertical-align: middle; }
+.timing-editor { display: flex; flex-direction: column; gap: var(--s2); margin: 0 var(--s3) var(--s2); padding: var(--s2) var(--s3); border-radius: var(--r-md); background: var(--sunken); }
+.timing-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.timing-label { width: 3em; color: var(--muted); font-size: var(--t-sm); }
+.timing-row .mono { min-width: 6.5em; }
+.timing-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--surface); position: sticky; top: var(--s2); z-index: 2; box-shadow: var(--shadow-1); }
+.timing-bar > p { flex-basis: 100%; margin: 0; }
+.note-dialog .row { margin-top: var(--s3); }
