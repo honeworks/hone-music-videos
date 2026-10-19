@@ -2703,3 +2703,26 @@ spinner and Pause and Stop, and offered no way to start it; the resume route fai
 thread for want of a run. It now shows **Not started** with a **Start** button, which posts to the same
 resume route; the route starts the run when there is none (queued behind a running video, like any job).
 No new route.
+
+## D-180: how 0034 is built  (2026-10-19, 0034)
+
+**Status:** accepted (implementation detail of 0034, approved with it).
+
+- **`place_in_words` wins over the wide rule.** An overhead camera or a creature fight keeps its
+  characters as pictures and has its place in words (0029 §3), even when it is wide without faces: the
+  research measured that case, the wide rule was not.
+- **The wide rule reads `faces` and `framing` only.** A wide shot with `faces: true` keeps its people's
+  pictures; the shot list's check already warns on faces in a wide shot. The limit of pictures for people
+  and place counts no character for a wide shot without faces.
+- **An expression needs the neutral close-up.** It is made even when no shot uses the neutral face,
+  since every expression is made from it (the Faces guide).
+- **An expression the bible lacks is sent back, then dropped** from the kept shot list as an unknown
+  variant is (`_kept_to_bible`), so a plan whose repair still names one is whole: the shot takes the
+  neutral close-up.
+- **Expression ids** are made safe and unique per character, like variants'; an item is
+  `<character>.close-<expression>` or `<character>.<variant>-close-<expression>`.
+- **Size words** are the usual aspect ratios (`16:9`, `9:16`, `1:1`, `4:5`, `4:3`, `3:2`, `2:3`,
+  `21:9`), a size of three or four digits each way (`1664x928`, also with `×`), and "aspect ratio". A
+  clock time (`10:30`) and a lens (`50mm`) are not.
+- **The guide stays word for word** (0026); its "Photorealistic" examples are disclaimed in the scene
+  and subject instructions instead.

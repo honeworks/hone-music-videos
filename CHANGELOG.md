@@ -8,6 +8,16 @@ design changed is in [`design/changes/`](design/changes/).
 
 ### Added
 
+- **Experimental: scene references made for an edit
+  model** ([0034](design/changes/0034-scene-references-for-an-edit-model.md)). Qwen-Image 2.1 edits its
+  first picture and takes the others as content, so every scene now gives the place first, then the
+  characters, then the objects, and the scene writer says what changes from them. A wide shot where no
+  face must be recognised takes no picture of its people, who are described in words, so they no longer
+  come out large and posed from their studio portraits. Characters get up to four expressions, each a
+  close-up made from the neutral one, for the face shots that need that feeling. A recurring arrangement
+  opens on a wide or medium master and its closer shots are made from it. Size and aspect words in a
+  prompt are sent back, and a subject prompt gets two repairs. Re-plan a project to use it.
+
 - **Experimental: feeling first, takes overnight, and
   a night of videos** ([0028](design/changes/0028-feeling-first-planning-and-overnight-queue.md)).
   The planner now decides what the viewer should feel before the shots: the song's shape is measured
