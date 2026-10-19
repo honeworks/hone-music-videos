@@ -157,7 +157,7 @@ def test_poses_and_details_get_pictures_of_their_own() -> None:
     assert items["queen.night-lying"].refs == ["queen.night"]
     detail = items["king.detail-the-snake-on-his-left-shoulder"]
     assert detail.refs == ["king.hero"] and "The snake on his left shoulder fills the frame" in detail.role
-    assert scene_refs(b, shots[0]) == ["king.lying", "queen.night-lying", "room.wide"]
+    assert scene_refs(b, shots[0]) == ["room.wide", "king.lying", "queen.night-lying"]
 
 
 def test_variants_and_states_reach_the_writers_whole() -> None:

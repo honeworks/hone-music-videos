@@ -39,6 +39,19 @@ RENDER_WORDS = re.compile(
     r"|ultra hd|octane|unreal engine|cgi|masterpiece|best quality|trending on artstation|3d render)\b",
     re.IGNORECASE,
 )
+# a size or an aspect ratio: parameters of the model, never words of a prompt (0034 §5; "In a 16:9 study")
+SIZE_WORDS = re.compile(
+    r"(?<![\d:])(?:16|9|1|4|3|2|21):(?:9|16|1|5|4|3|2)(?![\d:])"
+    r"|\b\d{3,4}\s*[x\u00d7]\s*\d{3,4}\b|\baspect ratio\b",
+    re.IGNORECASE,
+)
+
+
+def size_words(text: str) -> list[str]:
+    """The size or aspect-ratio words of a text, each once."""
+    return list(dict.fromkeys(m.group(0).lower() for m in SIZE_WORDS.finditer(text)))
+
+
 # a number in the list, not a measure after it ("image 2, 24mm lens", "image 1, 3 metres away")
 _NUMBER = r"\d+(?!\w)(?!\s*(?:%|°|(?:mm|cm|m|km|metres?|meters?|feet|foot|ft|inch(?:es)?|degrees?)\b))"
 IMAGES = re.compile(rf"\bimages?\s+({_NUMBER}(?:\s*(?:,|and|&)\s*{_NUMBER})*)", re.IGNORECASE)
@@ -59,8 +72,9 @@ def images_named(prompt: str) -> set[int]:
 
 
 def prompt_problems(where: str, prompt: str, pictures: int, *, starts: str = "") -> list[Problem]:
-    """A prompt that is empty or too long, uses words of a render, names a picture it does not have or
-    leaves one of its pictures unnamed, or does not begin with `starts` (the kind of picture)."""
+    """A prompt that is empty or too long, uses words of a render or of a size (0034), names a picture
+    it does not have or leaves one of its pictures unnamed, or does not begin with `starts` (the kind
+    of picture)."""
     if not prompt.strip():
         return [Problem(rule="empty-prompt", where=where, message="the prompt is empty")]
     found: list[str] = []
@@ -69,6 +83,9 @@ def prompt_problems(where: str, prompt: str, pictures: int, *, starts: str = "")
     words = sorted({w.lower() for w in RENDER_WORDS.findall(prompt)})
     if words:
         found.append(f"uses {', '.join(map(repr, words))}: words of a render; name the film's look instead")
+    sizes = size_words(prompt)
+    if sizes:
+        found.append(f"names {', '.join(map(repr, sizes))}: the size is the model's, never the prompt's")
     named, have = images_named(prompt), set(range(1, pictures + 1))
     if named - have:
         found.append(f"names image {', '.join(map(str, sorted(named - have)))}, but has {pictures} pictures")

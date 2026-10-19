@@ -44,7 +44,7 @@ def bible() -> Bible:
 
 def shot(**more: Any) -> FrameShot:
     fields: dict[str, Any] = {
-        "id": "S001", "start_ms": 0, "end_ms": 3000, "beat": "b", "framing": "wide", "faces": False,
+        "id": "S001", "start_ms": 0, "end_ms": 3000, "beat": "b", "framing": "medium", "faces": True,
         "camera": "static camera", "light": "l",
         "cast": [CastUse(character="ember", view="side"), CastUse(character="dragon", view="side")],
         "place": PlaceUse(place="pass", state="dusk"),
@@ -177,7 +177,10 @@ def test_the_limits_found_in_the_beats_go_to_the_review(project: hmv.Project) ->
 
 def test_an_extreme_camera_or_a_creature_fight_gets_the_place_in_words() -> None:
     plain, in_words = shot(), shot(place_in_words=True)
-    assert scene_refs(bible(), plain) == ["ember.hero", "dragon.hero", "pass.dusk"]
+    assert scene_refs(bible(), plain) == ["pass.dusk", "ember.hero", "dragon.hero"]
+    wide = {"framing": "wide", "faces": False}
+    assert scene_refs(bible(), shot(**wide)) == ["pass.dusk"]  # people in words (0034 §2)
+    assert scene_refs(bible(), shot(**wide, place_in_words=True)) == ["ember.hero", "dragon.hero"]
     assert scene_refs(bible(), in_words) == ["ember.hero", "dragon.hero"]
     data = _shot_data(bible(), [in_words], 0, Context(lines={}))
     assert [r["id"] for r in data["refs"]] == ["ember.hero", "dragon.hero"]

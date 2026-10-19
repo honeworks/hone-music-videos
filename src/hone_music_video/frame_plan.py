@@ -26,8 +26,9 @@ from typing import Any
 
 from hone_music_video import music
 from hone_music_video._jobs import Job
-from hone_music_video.frame_calls import RENDER_WORDS, Planner, system
+from hone_music_video.frame_calls import RENDER_WORDS, Planner, size_words, system
 from hone_music_video.frame_items import (
+    MAX_EXPRESSIONS,
     MAX_SCENE_REFS,
     SCENE_SIZES,
     asset_items,
@@ -87,7 +88,8 @@ def _lyrics(timeline: Timeline) -> dict[str, Any]:
 
 def bible_problems(bible: Bible, given: list[str]) -> list[Problem]:
     """A bible without the kind of picture, with a demo of other than three to six prompts, words of a
-    render in its shared words, a subject without its look, or a given picture it does not have."""
+    render or of a size in its shared words (0034), a subject without its look, a given picture it does
+    not have, or a character with more than four expressions (0034)."""
     found: list[str] = []
     if not bible.kind.strip():
         found.append("`kind` is empty: write the kind of picture as one sentence")
@@ -97,10 +99,15 @@ def bible_problems(bible: Bible, given: list[str]) -> list[Problem]:
         words = sorted({w.lower() for w in RENDER_WORDS.findall(text)})
         if words:
             found.append(f"`{name}` uses {', '.join(map(repr, words))}: words of a render")
+        sizes = size_words(text)
+        if sizes:
+            found.append(f"`{name}` names {', '.join(map(repr, sizes))}: the size is never in a prompt")
     subjects = [*bible.characters, *bible.objects, *bible.places]
     found += [f"{s.id} has no look: describe what is seen" for s in subjects if not s.look.strip()]
     found += [f"{s.id} names the given picture {s.given!r}; the given pictures are {given or 'none'}"
               for s in subjects if s.given and s.given not in given]  # fmt: skip
+    found += [f"{c.id} has {len(c.expressions)} expressions; write at most {MAX_EXPRESSIONS}"
+              for c in bible.characters if len(c.expressions) > MAX_EXPRESSIONS]  # fmt: skip
     return [Problem(rule="frame-bible", where="bible", message=m) for m in found]
 
 
@@ -201,12 +208,15 @@ def plan_shot_list(planner: Planner, inputs: Inputs, bible: Bible) -> tuple[Shot
 def _kept_to_bible(bible: Bible, shots: list[FrameShot]) -> list[FrameShot]:
     """What a shot names that the bible lacks is left out, so every picture a scene uses exists."""
     characters = {c.id: {v.id for v in c.variants} for c in bible.characters}
+    faces = {c.id: {e.id for e in c.expressions} for c in bible.characters}
     places = {p.id: {s.id for s in p.states} for p in bible.places}
     objects = {o.id for o in bible.objects}
     for shot in shots:
         shot.cast = [u for u in shot.cast if u.character in characters]
         for use in shot.cast:
             use.variant = use.variant if use.variant in characters[use.character] else ""
+            known = use.view == "close" and use.expression in faces[use.character]
+            use.expression = use.expression if known else ""
         if shot.place and shot.place.place not in places:
             shot.place = None
         if shot.place and shot.place.state not in places[shot.place.place]:

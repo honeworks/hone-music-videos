@@ -14,7 +14,7 @@ from typing import Any
 
 from hone_music_video.frame_calls import CALLS_AT_ONCE, Planner, prompt_problems, system
 from hone_music_video.frame_facts import facts_problems, scene_warnings
-from hone_music_video.frame_items import MAX_SCENE_REFS, hero_view, scene_refs
+from hone_music_video.frame_items import MAX_SCENE_REFS, hero_view, people_in_words, scene_refs
 from hone_music_video.ports import ImageInfo
 from hone_music_video.prompt_words import words_of_speech
 from hone_music_video.records import Problem
@@ -30,6 +30,7 @@ from hone_music_video.records_frame import (
 )
 
 SCENES_PER_CALL = 6
+SUBJECT_REPAIRS = 2  # a hero over the limit came back over it after one repair (0034 §5)
 MOTION_CHARS = 1000
 GUIDES = {
     "characters": ("project-file", "hero", "views", "faces", "poses", "models"),
@@ -48,6 +49,9 @@ def _character(c: FrameCharacter, name: str) -> dict[str, str]:
     view = name.removeprefix(variant.id).strip("-") if variant else name
     view = hero_view(c) if view in ("", "hero") else view
     look = variant.look if variant else c.look  # a variant's look is whole (0028)
+    if view.startswith("close-"):  # an expression (0034 §3)
+        face = next((e.face for e in c.expressions if f"close-{e.id}" == view), "")
+        return {"what": f"{c.name}, {c.noun}: close-up, {face}", "look": look}
     return {"what": f"{c.name}, {c.noun}: {view} view", "look": look}
 
 
@@ -186,7 +190,7 @@ def subject_prompts(
         data = _subject_data(bible, group, subject_items, by_id, choice)
         label = f"subject-{subject_items[0].subject}"
         check = _item_check(subject_items, choice)
-        reply, problems = planner.call(label, text, data, ItemPrompts, check=check)
+        reply, problems = planner.call(label, text, data, ItemPrompts, check=check, repairs=SUBJECT_REPAIRS)
         got = {p.id: p for p in reply.items}
         for item in subject_items:
             written = got.get(item.id)
@@ -250,13 +254,29 @@ def _place_words(bible: Bible, shot: FrameShot) -> list[dict[str, str]]:
     return [{"what": place.name, "look": look}]
 
 
+def _people_words(bible: Bible, shot: FrameShot) -> list[dict[str, str]]:
+    """The people of a wide shot without faces, in words (0034 §2): who, and the look of the variant."""
+    if not people_in_words(shot) or shot.from_scene:
+        return []
+    characters = {c.id: c for c in bible.characters}
+    found: list[dict[str, str]] = []
+    for use in shot.cast:
+        c = characters.get(use.character)
+        if c is not None:
+            variant = next((v for v in c.variants if v.id == use.variant), None)
+            found.append({"what": f"{c.name}, {c.noun}", "look": variant.look if variant else c.look})
+    return found
+
+
 def _shot_data(bible: Bible, shots: list[FrameShot], n: int, context: Context) -> dict[str, Any]:
     shot = shots[n]
     refs = scene_refs(bible, shot)
     left = [o for o in shot.objects if f"{o}.hero" not in refs]
-    words = _place_words(bible, shot) + [
-        {"what": o.name, "look": o.look} for o in bible.objects if o.id in left
-    ]
+    words = (
+        _place_words(bible, shot)
+        + _people_words(bible, shot)
+        + [{"what": o.name, "look": o.look} for o in bible.objects if o.id in left]
+    )
     before = shots[n - 1] if n > 0 else None
     return {
         "id": shot.id,
