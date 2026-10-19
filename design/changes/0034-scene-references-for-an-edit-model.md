@@ -104,13 +104,18 @@ a wide shot"), as the Scenes guide already asks for a figure in the background. 
 exact look at that distance is a shot the list plans closer.
 
 The shot list's instructions say it, so the planner knows a wide shot costs no character pictures; the
-sidecar's `cast` still names who is in the frame.
+sidecar's `cast` still names who is in the frame. There is no flag to keep a character picture in a wide
+shot: at that distance a face cannot be recognised anyway (§8.3), a costume is its one or two large things
+in words, and a creature's size is the plain measure the bible writes for it (0029 §4). A shot that needs
+the exact look is planned closer; if J2 shows wrong costumes in wide shots, the flag is the next record.
 
 ### 3. Expression close-ups
 
-The bible gives every character up to **three `expressions`** (`id`, `face`: what the face does, as the
-Faces guide writes it: eyes, brows, mouth held, jaw), chosen from the character's `inner` and the arc;
-none for a character the story never sees close. Code makes an item `<character>.close-<id>` (and
+The bible gives every character up to **four `expressions`** (`id`, `face`: what the face does, as the
+Faces guide writes it: eyes, brows, mouth held, jaw), the distinct feelings the arc gives that character,
+chosen from its `inner`; none for a character the story never sees close. The list costs nothing: only
+an expression a shot uses becomes a picture, so a lead seen close through the song may use all four and
+a minor character one. Code makes an item `<character>.close-<id>` (and
 `<character>.<variant>-close-<id>`) for each expression a shot uses, from the look's **neutral close-up**
 (refs `[<look>.close]`, square, as the Faces guide asks: "make the expression from the neutral close-up,
 not from the full figure"). The subject call writes its prompt like any close-up.
@@ -159,6 +164,11 @@ fully right):
 | J3 expressions (§3) | the face-shot cases take an expression close-up | the `emotion` tag gains (70% under I3; the one tag every idea of 0029 left flat) |
 | J4 `<image1>` tags | the pilot's 20 cases, wording only | gains outside noise; else "image 1" stays |
 | J5 what changes from image 1 | the pilot's 20 cases, wording only | gains outside noise; else the rule is kept as advice only |
+
+The harness runs under `scripts/gpu-lock.sh` only while the dashboard's queue is empty
+(`<projects>/.queue.json`), between the batch's videos, never beside a video's run. J1 and J2 run as one
+idea on the pilot's 20 cases first (about one and a half hours); the 100 cases (about seven hours) follow
+only when the pilot is not plainly worse. J3 runs on the face-shot cases only; J4 and J5 on the pilot.
 
 §4 is not a picture experiment: it is checked on the shot lists of the twelve batch projects (how many
 setups get a master and a `from_scene` child after the instruction) and by eye on one re-planned project.
@@ -222,11 +232,13 @@ problem), its storyboard beside the old one.
   pictures; they go first, and §3 and §4 follow only if the harness shows §1 and §2 were not enough on
   the `emotion` tag and on coverage.
 
-## Open questions for the owner
+## The open questions, answered
 
-1. Three expressions per character, or more for the lead? Each is a picture before the scenes and an
-   item in the Scenes view.
-2. Should a wide shot that needs the exact costume (a recognisable silhouette, a creature) be able to
-   keep one character picture (`refs_in_wide: true` on the shot), or is "plan it closer" enough?
-3. May the harness run on the GPU between the batch's videos, under `scripts/gpu-lock.sh`? About seven
-   hours for the 100 cases on J1 and J2 together.
+Decided by the proposer, 2026-10-19, so the record can be accepted whole:
+
+1. **How many expressions:** up to four per character in the bible, the arc's distinct feelings; only the
+   ones shots use become pictures (§3), so the lead costs at most four close-ups and a minor character one.
+2. **A character picture in a wide shot:** no flag (§2). A face is unrecognisable there, a costume is words,
+   a creature's size is its written measure. Revisited only if J2 shows wrong costumes.
+3. **The GPU:** the harness runs under the lock while the dashboard's queue is empty, pilot first, the
+   100 cases only on a pilot that is not plainly worse (Verification).
