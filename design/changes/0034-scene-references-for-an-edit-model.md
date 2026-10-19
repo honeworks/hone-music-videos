@@ -2,7 +2,7 @@
 
 ## Status
 
-`proposed`, 2026-10-19, after the overnight batch of 2026-10-19 (twelve projects, about 900 scene
+`accepted (approved by the maintainer 2026-10-19)`, proposed the same day, after the overnight batch of 2026-10-19 (twelve projects, about 900 scene
 pictures) and a reading of how ComfyUI's Qwen-Image 2.1 encoder uses reference pictures. Its smaller
 choices will be D-180 onwards. Every part is measured on the harness of 0029
 (`research/prompt-guide/`, 100 cases, the same seeds) before it ships; a part that gains nothing is
