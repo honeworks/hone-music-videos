@@ -9,8 +9,8 @@ you name. Be strict and concrete: every note says what fails and what would fix 
 
 - `feeling`: what the whole video should make the viewer feel; `arc`: per part of the song, its `feel`,
   `intensity` (1 quiet to 5 the strongest), `turn` and `evidence`.
-- `characters`: each with `presence` (what the viewer should feel about them) and `inner` (what they
-  feel, what they show, how it leaks).
+- `characters`: each with `presence` (what the viewer should feel about them), `inner` (what they
+  feel, what they show, how it leaks) and `expressions` (the faces it has pictures of).
 - `setups`: arrangements several shots share, with their `layout`.
 - `shots`: in order, each with its times, `sung` (the lines sung over it, any language), `beat` (the
   opening frame), `motion`, `ends`, `feel`, `evidence`, `framing`, `camera`, `cast` (who, which look,
@@ -34,7 +34,10 @@ you name. Be strict and concrete: every note says what fails and what would fix 
 5. **The pictures fit the shot.** A note when a shot shows a part of a character (a hand, something on
    their body) but its cast uses a body view or a face close-up instead of a `detail`; when a body lying,
    sitting or kneeling has no `pose`; when two or more people share a recurring arrangement without a
-   `setup`, or a setup's layout does not say who is on which side by their own left and right.
+   `setup`, or a setup's layout does not say who is on which side by their own left and right; when a
+   later shot of a setup, its camera on the master's side, is not made `from_scene` the master; when a
+   face shot whose `feel` is strong uses the neutral close-up although the character has an expression
+   for it.
 6. **The opening frame is one instant.** A note when a `beat` describes a sequence ("sits up, then
    turns"), or when the `motion` is more than one achievable change.
 7. **Hard moments have takes.** A note when two bodies touch, a creature or animal is with a person,

@@ -24,9 +24,10 @@ Follow the Scenes section of the guide below (Hone Frame's prompt guide), and th
   - `setup`: the layout of the arrangement it shares with other shots (who is where by their own left
     and right), or null;
   - `refs`: its pictures in order, `{"image": n, "id": ..., "what": ...}` (`what` says who or what it
-    is, the view it shows and the look to keep);
-  - `in_words`: who or what the frame holds without a picture (a place, an object or a person described
-    in words), with their description;
+    is, the view it shows and the look to keep). **The place comes first**: image 1 is the place's
+    view when the shot has one, then the characters, then the objects;
+  - `in_words`: who or what the frame holds without a picture (a place, an object, or the people of a
+    wide shot without faces, each with the whole look from the bible), with their description;
   - `before`: what the shot before left (where people are, what they hold, what changed), and `after`:
     the next shot's opening frame, for continuity.
 
@@ -48,16 +49,26 @@ code checks the prompt against them.
 
 # The scene prompt
 
+The image model treats image 1 as the picture it edits and the others as what to put into it. So the
+place picture gives the camera, the light and the room, and every character's picture is a figure
+standing on a grey backdrop in a calm, neutral pose: whatever you do not change in words stays as the
+pictures show it. **Say what changes from the pictures**: where the figure stands in the place and how
+large it is in the frame, its body in this instant (not the reference's stance), its face (not the
+reference's calm), the light on it (not the backdrop's).
+
 Write it from the facts, in this order, in plain sentences:
 
 1. `kind`, word for word.
-2. **The things with their counts and the links**, every picture by its number: "The hero from image 1
-   kneels at the spring in the oasis from image 3, beside one horse, the horse from image 2; his left hand
-   rests on the horse's neck." Name each by its noun and number ("the teal mug from image 4"), never by its
+2. **The things with their counts and the links**, every picture by its number, the place first: "In
+   the oasis from image 1, the hero from image 2 kneels at the spring beside one horse, the horse from
+   image 3; his hand rests on the horse's neck." Name each by its noun and number ("the teal mug from image 4"), never by its
    whole description; when this was left out the model no longer knew who was who. Say what changes from
    the pictures (a stain, wet hair, a time of day; what is not said, the picture wins; continuity short:
-   "Same face and leopard vest as image 1"), follow the `setup`'s layout and the `before`. When the place
+   "Same face and leopard vest as image 2"), follow the `setup`'s layout and the `before`. When the place
    has no picture, say where it is, fully: the ground, the background and the light, from `in_words`.
+   When the people have no picture (a wide shot without faces), describe each from `in_words` by what
+   reads at that distance (the build, the main garment and its colour, the one or two large things of
+   their own), their number and where they are in the frame, small.
 3. **The framing and the camera**: "A medium shot from the waist up at eye level, 50mm lens", "Wide
    low-angle shot, 24mm lens". One shot. A face that must be recognised needs a medium shot or closer; in
    a wide shot show people small, from behind or turned away.
@@ -87,6 +98,9 @@ Write it from the facts, in this order, in plain sentences:
   "poster") get drawn as that thing.
 - Leave out words of computer graphics and advertising ("photorealistic", "hyperrealistic", "8k",
   "razor-sharp", "masterpiece", "render", "glowing eyes").
+- The guide's examples were written before the rule on words of a render: where an example begins
+  "Photorealistic", write the project's `kind` instead. Never write a size or an aspect ratio
+  ("16:9", "1664x928"): they are the model's parameters, and code sends a prompt with them back.
 - Name nothing `world` says never appears.
 - Quoted short text renders well when it must be read; never mirrored or upside-down text.
 - Never write the size or aspect ratio. 60 to 160 words is usual, at most 1500 characters; with many

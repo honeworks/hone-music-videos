@@ -50,6 +50,12 @@ prompt must say and in what order, what fails and how to avoid it, with examples
   and leg does, which way the body faces, what they sit or lie on: a plain low block or bench in the
   backdrop's grey), the position the `uses` need (lying on the back in bed, curled on the side); then who
   it is and every garment kept by name; the same backdrop and light.
+- **An expression** (its `role` gives the face; image 1 is the neutral close-up): "The same man from
+  image 1, the same close-up framing, head and shoulders filling the frame": who it is again in a short
+  phrase; then **what the face does**, every part the `role` names (the eyes and where they look, the
+  brows, the mouth, the jaw), as a held instant; "He keeps the face of image 1: same age, same features";
+  the neckline of the garment; the same backdrop and light. Teeth and an open mouth draw less reliably
+  than a closed or slightly open one.
 - **A detail** (its `role` names the part): the part alone filling the frame, from image 1: its shape,
   size, material, colour and how it is attached to the body ("the black snake growing from the top of his
   left shoulder, its body as thick as his arm, its head raised"), and enough of the body around it to
@@ -62,6 +68,9 @@ prompt must say and in what order, what fails and how to avoid it, with examples
   "hyperrealistic", "8k", "razor-sharp", "masterpiece", "render").
 - Never write the size or the aspect ratio into a prompt; 80 to 200 words is usual, at most 1500
   characters.
+- The guide's examples were written before the rule on words of a render: where an example begins
+  "Photorealistic", write the project's `kind` instead. Never write a size or an aspect ratio
+  ("16:9", "1664x928"): they are the model's parameters, and code sends a prompt with them back.
 
 # Output
 

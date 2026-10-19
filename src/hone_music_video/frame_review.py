@@ -71,7 +71,8 @@ def _review_data(
         "feeling": bible.feeling,
         "arc": [a.model_dump(mode="json") for a in bible.arc],
         "characters": [
-            {"id": c.id, "name": c.name, "noun": c.noun, "presence": c.presence, "inner": c.inner}
+            {"id": c.id, "name": c.name, "noun": c.noun, "presence": c.presence, "inner": c.inner,
+             "expressions": [e.id for e in c.expressions]}
             for c in bible.characters
         ],
         "setups": [s.model_dump(mode="json") for s in reply.setups],

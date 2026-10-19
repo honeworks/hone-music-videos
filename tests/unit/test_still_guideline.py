@@ -196,3 +196,18 @@ def test_an_extreme_camera_or_a_creature_fight_gets_the_place_in_words() -> None
 def test_a_creatures_size_is_drawn_in_its_reference() -> None:
     assert "for scale" in ASSETS and "A scene can't change the size its reference shows" in ASSETS
     assert "its size against a person" in BIBLE
+
+
+# ------------------------------------------------------------------------------ 0034 in the instructions
+
+
+def test_the_calls_are_told_how_an_edit_model_reads_the_pictures() -> None:
+    assert "The place comes first" in SCENES and "Say what changes from the pictures" in SCENES
+    assert "in the oasis from image 1, the hero from image 2" in SCENES.lower()
+    assert "gets no picture of its people" in SHOTS and "The first shot of a setup is its master" in SHOTS
+    assert "`expression`" in SHOTS and "`expressions`" in BIBLE and "up to four" in BIBLE
+    assert "**An expression**" in ASSETS
+    assert "made `from_scene` the master" in REVIEW
+    for text in (SCENES, ASSETS):
+        assert "write the project's `kind` instead" in text
+        assert "Never write a size or an aspect ratio" in text

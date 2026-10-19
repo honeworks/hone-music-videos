@@ -102,6 +102,14 @@ story serve that feeling; the looks of the characters and places carry it.
     scene keeps what its picture wears: a hero in a helmet stays in the helmet in bed unless the bed
     scene has a variant without it. No variant for an expression or a pose: a body position a scene
     needs (sitting, lying, kneeling) is asked for by the shot list, not as a variant.
+  - `expressions`: up to four faces the arc gives this character, for the shots that see them close:
+    the distinct feelings of its `inner` across the song (dread, grief, the false smile, cold resolve),
+    each with an `id` (`dread`) and `face`: **what the face does**, as the Faces guide writes it: where
+    the eyes look and how wide, the brows, the mouth held or pressed, the jaw ("her eyes wide and fixed
+    past the camera, the inner ends of her brows drawn up, her lips pressed together"). Never a feeling
+    word alone. Each becomes a close-up made from the character's neutral close-up; a scene copies the
+    face of its picture, and a neutral picture draws a neutral face. None for a character the story never
+    sees close; only the ones a shot uses are made.
 - `objects`: the things that must look the same every time they are seen and that words alone would
   draw as the nearest common object (an ox-headed mace, a named ring, a letter with a red seal). `id`,
   `name`, `look`: the object alone, its shape first, then size, materials, colours and distinctive
