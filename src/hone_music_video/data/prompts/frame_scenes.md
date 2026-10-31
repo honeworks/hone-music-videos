@@ -16,7 +16,7 @@ Follow the Scenes section of the guide below (Hone Frame's prompt guide), and th
 - `shots`: the scenes to write, each with:
   - `id`, `duration_ms`, `beat` (**the opening frame**: what the picture shows), `motion` (the one change
     during the clip), `lines` (what is sung over it, for feeling only: nobody sings or speaks on screen),
-    `framing`, `faces`, `camera`, `light`, `takes`;
+    `focus` (below), `framing`, `faces`, `camera`, `light`, `takes`;
   - `feel` (what the viewer should feel at this moment) and `evidence` (what they see that makes them
     feel it), `arc` (the part of the song it is in: its feel, intensity 1–5, turn and evidence), and
     `people`: the cast's `presence` (what the viewer should feel about them) and `inner` (what they feel,
@@ -46,6 +46,22 @@ code checks the prompt against them.
 - `visible`: what the camera must show for the links to read: the root where the snake grows from the
   shoulder, both eyes and what they look at, the hand and the thing it touches.
 - `moment`: the one frozen instant of the still: positions, never movements.
+
+# The focus
+
+Every shot is one simple picture of one focus, and the feeling has one carrier in it. Write the prompt
+for the focus, the carrier made concrete:
+
+- `face`: one face and shoulders filling the frame; the eyes (where they look, how wide), the brows, the
+  mouth held or pressed, the jaw, the tilt of the head; the place soft behind.
+- `figure`: one body in the place, how large in the frame and where; its posture (the shoulders, the
+  weight, the hands), what it does in this instant, the light on it.
+- `pair`: two people and the space between them; who looks at whom or away, who leans in or back, any
+  gentle contact exactly (side by side, a hand resting on a shoulder).
+- `place`: the place alone in its light and weather; what is empty, what moves; people, if any, small
+  and unnamed.
+- `detail`: one thing filling the frame, its shape, material and state (worn, broken, wet), and how it is
+  lit.
 
 # The scene prompt
 
@@ -103,10 +119,8 @@ Write it from the facts, in this order, in plain sentences:
 - Never write the size or aspect ratio. 60 to 160 words is usual, at most 1500 characters; with many
   pictures keep it short and concrete.
 - The picture is the opening frame: write the `beat`'s instant, never the motion that follows it.
-- `prompts`: one prompt; for a shot whose `takes` is `"prompts"`, **two or three different shots of the
-  same moment** (another framing or angle, the moment just before or after, a close shot of the hands),
-  each a whole prompt with the same pictures: a hard moment that failed as one shot usually came out in
-  another. For `"one"` and `"count"`, one prompt.
+- `prompts`: one prompt; only for a shot whose `takes` is `"prompts"` (an older plan's), two or three
+  different shots of the same moment, each a whole prompt with the same pictures.
 
 # The motion prompt
 

@@ -14,6 +14,7 @@ from typing import Any
 
 from hone_music_video.frame_calls import CALLS_AT_ONCE, Planner, prompt_problems, system
 from hone_music_video.frame_facts import facts_problems, scene_warnings
+from hone_music_video.frame_focus import focus_of
 from hone_music_video.frame_items import MAX_SCENE_REFS, hero_view, scene_refs
 from hone_music_video.ports import ImageInfo
 from hone_music_video.prompt_words import words_of_speech
@@ -269,6 +270,7 @@ def _shot_data(bible: Bible, shots: list[FrameShot], n: int, context: Context) -
         "arc": _arc_of(bible, context, shot.start_ms),
         "people": _people(bible, shot),
         "lines": [context.lines[i] for i in shot.lines if i in context.lines],
+        "focus": focus_of(shot),
         "framing": shot.framing,
         "faces": shot.faces,
         "camera": shot.camera,

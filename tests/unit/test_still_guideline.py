@@ -125,7 +125,8 @@ def test_the_shot_list_is_planned_around_the_six_limits() -> None:
                   "A tear, a cut or a swollen eye", "Eyes meeting", "A movement state"):  # fmt: skip
         assert words in LIMITS, words
     assert "the moment just before or after" in LIMITS
-    assert "The models' limits" in REVIEW and "`code_found`" in REVIEW
+    assert "`code_found`" in REVIEW  # the review reads what code found; the focuses plan around the rest
+    assert "two bodies gripping or fighting" in SHOTS and "planned as one of these instead" in SHOTS
 
 
 @pytest.mark.parametrize(
@@ -203,7 +204,7 @@ def test_an_extreme_camera_or_a_creature_fight_gets_the_place_in_words() -> None
     assert data["in_words"] == [
         {"what": "the mountain pass", "look": "a narrow pass of grey rock Low sun from the left. red sky"}
     ]
-    assert "`place_in_words`" in SHOTS and "straight down" in SHOTS
+    assert "straight-down camera" in SHOTS  # planned as a focus now, not `place_in_words` (0035)
 
 
 # ------------------------------------------------------------------------------ §4 a creature's size

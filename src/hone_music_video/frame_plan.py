@@ -27,6 +27,7 @@ from typing import Any
 from hone_music_video import music
 from hone_music_video._jobs import Job
 from hone_music_video.frame_calls import RENDER_WORDS, Planner, size_words, system
+from hone_music_video.frame_focus import focus_problems, with_focus_views
 from hone_music_video.frame_items import (
     MAX_SCENE_REFS,
     SCENE_SIZES,
@@ -185,10 +186,13 @@ def plan_shot_list(planner: Planner, inputs: Inputs, bible: Bible) -> tuple[Shot
         data["review_note"] = inputs.note
 
     def check(reply: ShotList) -> list[Problem]:
-        shots = numbered(reply.model_copy(deep=True))
+        shots = with_focus_views(numbered(reply.model_copy(deep=True)))
         report = check_shots(as_shots(shots), inputs.timeline, [c.id for c in bible.characters], settings)
         setups = [s.id for s in reply.setups]
-        return report.errors + shot_problems(bible, shots, setups=setups) + camera_problems(shots)
+        focused = [
+            Problem(rule="frame-focus", where=s.id, message=m) for s in shots for m in focus_problems(s)
+        ]
+        return report.errors + focused + shot_problems(bible, shots, setups=setups) + camera_problems(shots)
 
     text = system("frame_shots", limits=True)
     reply, problems = planner.call("shots", text, data, ShotList, check=check, repairs=SHOT_REPAIRS)
@@ -198,7 +202,7 @@ def plan_shot_list(planner: Planner, inputs: Inputs, bible: Bible) -> tuple[Shot
         again = data | {"previous_reply": reply.model_dump(mode="json")}
         again["problems"] = [p.model_dump(include={"where", "message"}) for p in [*notes, *problems]]
         reply, problems = planner.call("shots-review", text, again, ShotList, check=check)
-    reply.shots = _kept_to_bible(bible, numbered(reply))
+    reply.shots = _kept_to_bible(bible, with_focus_views(numbered(reply)))
     return reply, problems
 
 

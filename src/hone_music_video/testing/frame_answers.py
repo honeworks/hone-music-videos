@@ -74,6 +74,7 @@ def _shot(n: int, start: int, end: int, lines: list[dict[str, Any]]) -> dict[str
         "end_ms": end,
         "lines": [ln["id"] for ln in lines if ln["start_ms"] < end and ln["end_ms"] > start],
         "beat": f"beat {n}: the woman walks on",
+        "focus": "face" if face else "figure",
         "framing": "medium" if face else "wide",
         "faces": face,
         "camera": MOVES[n % len(MOVES)],
