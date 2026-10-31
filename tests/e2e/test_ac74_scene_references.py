@@ -80,14 +80,18 @@ def test_ac78_size_words_are_sent_back_and_subjects_repaired_twice(project: hmv.
         answer["demo"] = [f"{answer['kind']} In a 16:9 frame, a woman. {answer['finish']}"] * 3
         return answer
 
-    def too_long(data: Mapping[str, Any]) -> dict[str, Any]:
-        return {"items": [{"id": i["id"], "prompt": "x" * 1600} for i in data["items"]]}
+    def too_long(data: Mapping[str, Any]) -> dict[str, Any]:  # the lamp's prompt: too long, then a size
+        size = "1664x928 " if data.get("problems") else ""
+        return {"items": [{"id": i["id"], "prompt": size + "x" * 1600} for i in data["items"]]}
 
     models = FakeModels(answers=FRAME_ANSWERS | {"Bible": sized, "ItemPrompts": too_long})
-    to_plan(project, models)
+    plan = to_plan(project, models)
     bibles = [c.data for c in models.calls_of("plan") if c.schema == "Bible"]
     assert any("16:9" in p["message"] for p in bibles[1]["problems"])
     lamp = [
         c for c in models.calls_of("plan") if c.schema == "ItemPrompts" and c.data["subject"]["id"] == "lamp"
     ]
     assert len(lamp) == 3  # the call and two repairs
+    assert any("characters, over 1500" in p["message"] for p in lamp[1].data["problems"])
+    assert any("'1664x928'" in p["message"] for p in lamp[2].data["problems"])  # a size is sent back
+    assert plan["objects"]["lamp"]["hero"]["prompt"].startswith("1664x928 x")  # the last reply is kept

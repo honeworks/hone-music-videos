@@ -16,6 +16,7 @@ from hone_music_video.frame_items import (
     seed_of,
     shot_problems,
 )
+from hone_music_video.frame_plan import bible_problems
 from hone_music_video.frame_prompts import Context, _shot_data
 from hone_music_video.records import Framing
 from hone_music_video.records_frame import Bible, CastUse, FrameShot, PlaceUse
@@ -161,3 +162,16 @@ def test_size_words_are_never_in_a_prompt() -> None:
     assert size_words("at 10:30, the hero from image 1, 50mm lens, one in 3 of them") == []
     found = " ".join(p.message for p in prompt_problems("S001", f"{KIND} In a 16:9 frame, image 1.", 1))
     assert "'16:9'" in found
+
+
+def test_the_bibles_kind_and_finish_with_a_size_are_sent_back() -> None:
+    b = bible()
+    b.kind, b.finish = f"{KIND} 1664x928.", "Film grain, aspect ratio 16:9."
+    messages = " ".join(p.message for p in bible_problems(b, []))
+    assert "`kind` names '1664x928'" in messages and "`finish` names 'aspect ratio', '16:9'" in messages
+
+
+def test_a_scene_made_from_a_scene_has_only_that_scene() -> None:
+    b = normalized(bible())
+    later = shot(2, [CastUse(character="darvin")], PlaceUse(place="oasis"), ["mace"])
+    assert scene_refs(b, later.model_copy(update={"from_scene": "S001"})) == ["S001"]
