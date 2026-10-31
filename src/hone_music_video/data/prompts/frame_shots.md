@@ -46,7 +46,7 @@ straight-down camera) is planned as one of these instead.
 | `figure` | one character, the whole body or from the waist, in the place | `medium`, `wide`, `extreme-wide` | the posture, where the body is in the frame, what the hands do, the light on it |
 | `pair` | two characters, apart or in gentle contact (side by side, a hand on a shoulder) | `medium`, `wide` | the distance between them, who looks at whom or away, who leans |
 | `place` | the place alone; people too small to matter are words in the beat | `wide`, `extreme-wide` | the light, the weather, the emptiness, what moves |
-| `detail` | one thing filling the frame: an object, a hand, a part of a character, or two hands that touch | `insert`, `extreme-close-up`, `close-up` | the thing itself and what has happened to it |
+| `detail` | one thing filling the frame: an object, a hand, a part of a character | `insert`, `extreme-close-up`, `close-up` | the thing itself and what has happened to it |
 
 Code sends back a shot whose `cast` or `framing` its focus does not allow. A violent or crowded moment
 becomes a sequence of simple ones: the moment before or after it, the `face` of the one who reacts, the
@@ -90,8 +90,7 @@ becomes a sequence of simple ones: the moment before or after it, the `face` of 
 - `cast`: the characters in the frame, as many as the focus holds, each with `variant` (one of its
   variants when the story has changed its look, else `""`), and for a `figure` or a `pair` the `view`
   the shot sees (`front`, `three-quarter`, `side`, `back`) and its `pose` (`sitting`, `lying`,
-  `kneeling` or `""`); for a `detail` of a character its `part` ("her right hand"; two characters when the frame holds the
-  touching parts of both, each with its part). A `face` needs no
+  `kneeling` or `""`); for a `detail` of a character its `part` ("her right hand"). A `face` needs no
   view: code gives it the character's close-up.
 - `place`: the place and the view whose camera matches the shot's (`wide`, `reverse`, `high`, `low`,
   `close`) and its `state`, or null for a `detail` against a plain or blurred background.
