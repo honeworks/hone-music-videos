@@ -50,7 +50,8 @@ def test_the_options_and_the_world_are_data_for_the_planners(
 
     with pytest.raises(SystemExit):  # argparse names the paces
         main(["new", "Bad", "--song", str(song), "--projects", str(tmp_path / "p"), "--pace", "slow"])
-    assert "choose from calm, balanced, energetic" in capsys.readouterr().err
+    err = capsys.readouterr().err.replace("'", "")  # Python 3.12.8 and later quote the choices
+    assert "choose from calm, balanced, energetic" in err
     assert [p.root for p in hmv.list_projects(tmp_path / "p")] == [project.root]  # none made
 
 
