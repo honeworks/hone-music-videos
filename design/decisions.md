@@ -2703,3 +2703,61 @@ spinner and Pause and Stop, and offered no way to start it; the resume route fai
 thread for want of a run. It now shows **Not started** with a **Start** button, which posts to the same
 resume route; the route starts the run when there is none (queued behind a running video, like any job).
 No new route.
+
+## D-180: how 0034 is built  (2026-10-19, 0034)
+
+**Status:** accepted (implementation detail of 0034, approved with it); its bullets on the wide rule and
+on expressions are superseded by D-181 and D-182 (2026-10-31).
+
+- **`place_in_words` wins over the wide rule.** An overhead camera or a creature fight keeps its
+  characters as pictures and has its place in words (0029 §3), even when it is wide without faces: the
+  research measured that case, the wide rule was not.
+- **The wide rule reads `faces` and `framing` only.** A wide shot with `faces: true` keeps its people's
+  pictures; the shot list's check already warns on faces in a wide shot. The limit of pictures for people
+  and place counts no character for a wide shot without faces.
+- **An expression needs the neutral close-up.** It is made even when no shot uses the neutral face,
+  since every expression is made from it (the Faces guide).
+- **An expression the bible lacks is sent back, then dropped** from the kept shot list as an unknown
+  variant is (`_kept_to_bible`), so a plan whose repair still names one is whole: the shot takes the
+  neutral close-up.
+- **Expression ids** are made safe and unique per character, like variants'; an item is
+  `<character>.close-<expression>` or `<character>.<variant>-close-<expression>`.
+- **Size words** are the usual aspect ratios (`16:9`, `9:16`, `1:1`, `4:5`, `4:3`, `3:2`, `2:3`,
+  `21:9`), a size of three or four digits each way (`1664x928`, also with `×`), and "aspect ratio". A
+  clock time (`10:30`) and a lens (`50mm`) are not.
+- **The guide stays word for word** (0026); its "Photorealistic" examples are disclaimed in the scene
+  and subject instructions instead.
+
+## D-181: 0034's expression close-ups are dropped  (2026-10-31, 0034 §3)
+
+**Status:** accepted (the measurement 0034 asked for decides it).
+
+On the 17 face cases of the harness an expression close-up as the face shot's reference passed 66% of
+the checks against 73% with the neutral close-up, and the cases' feeling checks did not gain (70%
+against 72%): the close-up reference pulled the scene's scale and camera toward a head on a backdrop.
+The bible's `expressions`, a cast use's `expression`, their items, checks and instructions are removed;
+the face is written in the scene prompt as before (0028). A reply or plan kept with those fields still
+reads: the records ignore fields they do not know. Guarantee 76 is removed.
+
+## D-182: a wide shot keeps its character pictures; the review sees `from_scene`  (2026-10-31, 0034 §2, §4)
+
+**Status:** accepted (the measurement 0034 asked for decides it).
+
+- **J2 is dropped.** On its 22 wide cases, people in words passed 68% of the checks against 82%, and a
+  quarter of the pictures were fully right against half, although they looked less posed. The place
+  first with the characters' pictures kept matched the control's checks and had more pictures fully
+  right, so a wide shot without faces now gets its place, then its characters, then its objects, like
+  any shot. Guarantee 75 says so.
+- **The review sees `from_scene`** (guarantee 79). It is told to check that a setup's later shots are
+  made from the master, but its data left the field out: in the batch re-plans it said so, and one
+  repair dropped a `from_scene` it could not see.
+- **The shot list's wording.** "A wide shot without faces gets no picture of its people" was read as
+  "lists no people": 77% of those shots came back with an empty cast (38% before). With J2 gone the
+  sentence is gone too.
+
+## D-183: the encoder's `<image1>` tags are not used  (2026-10-31, 0034 Verification J4)
+
+**Status:** accepted (the measurement 0034 asked for decides it).
+
+On the pilot's 20 cases, the same prompts with `<image1>` for "image 1" passed 78% of the checks, as
+"image 1" did, with as many pictures fully right. The prompts keep "image 1".

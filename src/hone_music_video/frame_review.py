@@ -65,13 +65,19 @@ def _review_data(
     bible: Bible, shots: list[FrameShot], lines: dict[str, str], reply: ShotList
 ) -> dict[str, Any]:
     keep = {"id", "start_ms", "end_ms", "beat", "motion", "ends", "feel", "evidence", "framing", "camera",
-            "cast", "place", "setup", "takes", "place_in_words"}  # fmt: skip
+            "cast", "place", "setup", "from_scene", "takes", "place_in_words"}  # fmt: skip
     limits = [p for s in shots for p in model_limits(s.id, s.beat, s.framing)]
     return {
         "feeling": bible.feeling,
         "arc": [a.model_dump(mode="json") for a in bible.arc],
         "characters": [
-            {"id": c.id, "name": c.name, "noun": c.noun, "presence": c.presence, "inner": c.inner}
+            {
+                "id": c.id,
+                "name": c.name,
+                "noun": c.noun,
+                "presence": c.presence,
+                "inner": c.inner,
+            }
             for c in bible.characters
         ],
         "setups": [s.model_dump(mode="json") for s in reply.setups],

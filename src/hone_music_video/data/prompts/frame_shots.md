@@ -103,7 +103,7 @@ your list for the feeling and may send it back with notes.
   the place in words (a place picture fixes the camera to its own and crowds a fight). Keep `place` set;
   else false.
 - `objects`: the bible's objects the frame shows (ids).
-- Everything together within `max_pictures`: one per character, one for the place, one per object.
+- Everything together within `max_pictures`: the place first, one per character, one per object.
   Fewer pictures draw better: give a scene only what it shows.
 - `takes`: how many pictures the scene gets; they are all made overnight with their clips, and the
   owner may swap one in later:
@@ -118,8 +118,12 @@ your list for the feeling and may send it back with notes.
   family at a table, riders side by side), declare it once in the list's `setups` (`id`, `layout`: who
   is where **by their own left and right** and on which side of what, which hand is free, what touches
   what) and give each of those shots its `id`; else `""`. The layout holds when the camera reverses:
-  describe it by the people's own sides, never by the screen. The first shot of a setup establishes it;
-  a later one whose camera is close to the first's may be made from it with `from_scene`.
+  describe it by the people's own sides, never by the screen. **The first shot of a setup is its
+  master**: `wide` or `medium`, showing the whole arrangement (code sends back a setup that opens closer).
+  A later shot of the setup whose camera stays on the master's side is made from it with `from_scene`:
+  drawn from one picture that already holds the place, the people and the light, it keeps the
+  arrangement and the look, and costs one picture instead of three. Use setups for every arrangement
+  that recurs, and cover it from its master.
 - `from_scene`: an earlier shot's id when this scene is that picture changed a little (the same
   arrangement, a small change), else `""`.
 

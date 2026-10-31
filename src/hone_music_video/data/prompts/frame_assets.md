@@ -62,6 +62,9 @@ prompt must say and in what order, what fails and how to avoid it, with examples
   "hyperrealistic", "8k", "razor-sharp", "masterpiece", "render").
 - Never write the size or the aspect ratio into a prompt; 80 to 200 words is usual, at most 1500
   characters.
+- The guide's examples were written before the rule on words of a render: where an example begins
+  "Photorealistic", write the project's `kind` instead. Never write a size or an aspect ratio
+  ("16:9", "1664x928"): they are the model's parameters, and code sends a prompt with them back.
 
 # Output
 

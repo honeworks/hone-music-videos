@@ -30,6 +30,7 @@ from hone_music_video.records_frame import (
 )
 
 SCENES_PER_CALL = 6
+SUBJECT_REPAIRS = 2  # a hero over the limit came back over it after one repair (0034 §5)
 MOTION_CHARS = 1000
 GUIDES = {
     "characters": ("project-file", "hero", "views", "faces", "poses", "models"),
@@ -186,7 +187,7 @@ def subject_prompts(
         data = _subject_data(bible, group, subject_items, by_id, choice)
         label = f"subject-{subject_items[0].subject}"
         check = _item_check(subject_items, choice)
-        reply, problems = planner.call(label, text, data, ItemPrompts, check=check)
+        reply, problems = planner.call(label, text, data, ItemPrompts, check=check, repairs=SUBJECT_REPAIRS)
         got = {p.id: p for p in reply.items}
         for item in subject_items:
             written = got.get(item.id)

@@ -167,4 +167,4 @@ def test_a_long_unbroken_line_is_matched_quickly() -> None:
     began = time.monotonic()
     assert gaps("la " * 300, words, 400_000) == []  # longer than LONGEST_LINE letters: not matched
     gaps(paragraph + "\n" + "la " * 60, words, 400_000)
-    assert time.monotonic() - began < 0.5
+    assert time.monotonic() - began < 2.0  # quadratic matching took minutes; a shared CI runner ~0.6 s

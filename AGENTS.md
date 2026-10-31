@@ -12,7 +12,9 @@ through hone-models. Read [design/current.md](design/current.md) before changing
 lists the guarantees the tests check. Why the design looks like this:
 [design/changes/](design/changes/) and [design/decisions.md](design/decisions.md).
 
-**Status:** the design (0001) is `accepted` (2026-10-10); milestones M1 to M6 and changes 0002 to 0008, 0014, 0020, 0021, 0022, 0024 and 0025 are built (0.1, not released). 0026, 0027 (Hone Frame is the only scene pipeline, re-implemented in `hone_music_video.frame`), 0028 (feeling-first planning, takes overnight, the overnight queue) 0029 (the still models' prompt guideline) 0030 (the Scenes board, the planner's calls, line starts from the heard words) 0031 (clips only for the picked takes), 0032 (lines the aligner lost timed from the heard words) and 0033 (one prompt at a time) are built (experimental; merged to `main` on 2026-10-18).
+**Status:** the design (0001) is `accepted` (2026-10-10); milestones M1 to M6 and changes 0002 to 0008, 0014, 0020, 0021, 0022, 0024 and 0025 are built (0.1, not released). 0026, 0027 (Hone Frame is the only scene pipeline, re-implemented in `hone_music_video.frame`), 0028 (feeling-first planning, takes overnight, the overnight queue) 0029 (the still models' prompt guideline) 0030 (the Scenes board, the planner's calls, line starts from the heard words) 0031 (clips only for the picked takes), 0032 (lines the aligner lost timed from the heard words) and 0033 (one prompt at a time) are built (experimental; merged to `main` on 2026-10-18). 0034 (scene
+references made for an edit model: the place first, one master per setup) is built and measured
+(2026-10-31; its wide-shots-in-words and expression parts were dropped).
 Do not implement anything the owner has not accepted.
 
 ## Commands

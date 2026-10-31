@@ -17,8 +17,22 @@ jobs:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.2.0
         with: { python-version: "${{ matrix.python }}", enable-cache: true }
-      # The `measure` stage reads the song with ffprobe (design §2.1); the tests measure real WAV files.
-      - run: command -v ffprobe || (sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg)
+      # The `measure` stage reads the song with ffprobe (design §2.1); the tests measure real WAV files and
+      # cut real clips. Ubuntu's ffmpeg 6 fills a gap in a clip's timestamps differently from the ffmpeg
+      # the library runs with (7 and later), so CI takes a pinned static 9.0 build, checked by its sha256.
+      # BtbN prunes old autobuilds: when this tag is gone, pin a newer one and its sha256.
+      - name: ffmpeg 9.0 (pinned static build)
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          TAG: autobuild-2026-10-31-12-59
+          ASSET: ffmpeg-n9.0.2-39-g7adfbe40dc-linux64-gpl-9.0
+          SHA256: 73e29a56974ae5a651133a04584c7483b21afe941e17dc91d79814a758b608d3
+        run: |
+          gh release download "$TAG" --repo BtbN/FFmpeg-Builds --pattern "$ASSET.tar.xz" --dir "$RUNNER_TEMP"
+          echo "$SHA256  $RUNNER_TEMP/$ASSET.tar.xz" | sha256sum --check
+          tar -xJf "$RUNNER_TEMP/$ASSET.tar.xz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/$ASSET/bin" >> "$GITHUB_PATH"
+      - run: ffmpeg -version | head -1
       # Every extra and the dev dependency group (installed by default).
       - run: uv sync --all-extras --frozen
       - run: uv run ruff check .
@@ -32,6 +46,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.2.0
+      - name: ffmpeg 9.0 (pinned static build, as in `test`; the quickstart assembles a video)
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          TAG: autobuild-2026-10-31-12-59
+          ASSET: ffmpeg-n9.0.2-39-g7adfbe40dc-linux64-gpl-9.0
+          SHA256: 73e29a56974ae5a651133a04584c7483b21afe941e17dc91d79814a758b608d3
+        run: |
+          gh release download "$TAG" --repo BtbN/FFmpeg-Builds --pattern "$ASSET.tar.xz" --dir "$RUNNER_TEMP"
+          echo "$SHA256  $RUNNER_TEMP/$ASSET.tar.xz" | sha256sum --check
+          tar -xJf "$RUNNER_TEMP/$ASSET.tar.xz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/$ASSET/bin" >> "$GITHUB_PATH"
       - run: uv build
       - name: Smoke test the wheel in a clean env
         run: |

@@ -26,7 +26,7 @@ from typing import Any
 
 from hone_music_video import music
 from hone_music_video._jobs import Job
-from hone_music_video.frame_calls import RENDER_WORDS, Planner, system
+from hone_music_video.frame_calls import RENDER_WORDS, Planner, size_words, system
 from hone_music_video.frame_items import (
     MAX_SCENE_REFS,
     SCENE_SIZES,
@@ -87,7 +87,8 @@ def _lyrics(timeline: Timeline) -> dict[str, Any]:
 
 def bible_problems(bible: Bible, given: list[str]) -> list[Problem]:
     """A bible without the kind of picture, with a demo of other than three to six prompts, words of a
-    render in its shared words, a subject without its look, or a given picture it does not have."""
+    render or of a size in its shared words (0034), a subject without its look, or a given picture it
+    does not have."""
     found: list[str] = []
     if not bible.kind.strip():
         found.append("`kind` is empty: write the kind of picture as one sentence")
@@ -97,6 +98,9 @@ def bible_problems(bible: Bible, given: list[str]) -> list[Problem]:
         words = sorted({w.lower() for w in RENDER_WORDS.findall(text)})
         if words:
             found.append(f"`{name}` uses {', '.join(map(repr, words))}: words of a render")
+        sizes = size_words(text)
+        if sizes:
+            found.append(f"`{name}` names {', '.join(map(repr, sizes))}: the size is never in a prompt")
     subjects = [*bible.characters, *bible.objects, *bible.places]
     found += [f"{s.id} has no look: describe what is seen" for s in subjects if not s.look.strip()]
     found += [f"{s.id} names the given picture {s.given!r}; the given pictures are {given or 'none'}"

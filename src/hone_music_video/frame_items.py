@@ -5,8 +5,9 @@ references in order. No model is called here.
 The items follow Hone Frame's guide: a character's hero (the whole figure from the front; an animal's
 from the side) on the reference backdrop, then the views, close-ups and variants the shots use, each made
 from the hero; an object's hero; a place's wide view empty of people, then its other views and states.
-A scene's references are one picture per character (the view the shot sees, a close-up in a face shot),
-the place's view matching the camera, then the objects (Hone Frame's guide, Scenes)."""
+A scene's references are the place's view matching the camera first (the model edits image 1, 0034 §1),
+then one picture per character (the view the shot sees, a close-up in a face shot), then
+the objects."""
 
 from __future__ import annotations
 
@@ -35,6 +36,7 @@ MAX_SCENE_REFS = 4  # three to five references drew a character twice most often
 SCENE_SIZES = {"16:9": "1664x928", "9:16": "928x1664", "1:1": "1328x1328", "4:5": "704x880"}
 PERSON_SIZE, ANIMAL_SIZE, SQUARE = "832x1248", "1536x1024", "1024x1024"
 FACE_FRAMINGS = ("medium", "close-up", "extreme-close-up")
+MASTER_FRAMINGS = ("wide", "medium")  # the first shot of a setup shows the whole arrangement (0034 §4)
 BODY_VIEWS: tuple[CharacterView, ...] = ("three-quarter", "side", "back", "front")
 PLACE_VIEWS: tuple[PlaceView, ...] = ("wide", "reverse", "high", "low", "close")
 VIEW_WORDS = {
@@ -127,18 +129,18 @@ def object_item(object_id: str) -> str:
 
 
 def scene_refs(bible: Bible, shot: FrameShot, limit: int = MAX_SCENE_REFS) -> list[str]:
-    """A scene's references in order: each character's picture, the place's view (none when the shot
-    wants the place in words, 0029 §3), the objects; the objects past `limit` are left to the words. A
-    scene made from a scene has that scene only (0027; Hone Frame's guide, "A scene made from another
-    scene")."""
+    """A scene's references in order: the place's view first, the picture the model edits (0034 §1;
+    none when the shot wants the place in words, 0029 §3), each character's picture, the objects; the
+    objects past `limit` are left to the words. A scene made from a scene has that scene only (0027;
+    Hone Frame's guide, "A scene made from another scene")."""
     if shot.from_scene:
         return [shot.from_scene]
     characters = {c.id: c for c in bible.characters}
-    refs = [character_item(characters[u.character], u) for u in shot.cast if u.character in characters]
-    refs += [place_item(shot.place)] if shot.place and not shot.place_in_words else []
+    refs = [place_item(shot.place)] if shot.place and not shot.place_in_words else []
+    refs += [character_item(characters[u.character], u) for u in shot.cast if u.character in characters]
+    kept = len(dict.fromkeys(refs))
     refs += [object_item(o) for o in shot.objects]
-    people = len(dict.fromkeys(refs[: len(refs) - len(shot.objects)]))
-    return list(dict.fromkeys(refs))[: max(limit, people)]
+    return list(dict.fromkeys(refs))[: max(limit, kept)]
 
 
 # ------------------------------------------------------------------------------ the shot list checked
@@ -195,14 +197,21 @@ def shot_problems(
 ) -> list[Problem]:
     """What a shot list names that the bible does not have, scenes with more pictures than `limit` for
     their people and place (objects past it are left to the words), a scene made from a scene that is
-    not an earlier one, and a shot without its feeling, evidence or motion (0028)."""
+    not an earlier one, a shot without its feeling, evidence or motion (0028), and a setup whose first
+    shot is not its master (0034)."""
     found: list[Problem] = []
     declared = set(setups)
+    opened: set[str] = set()
     for n, shot in enumerate(shots):
         why = _cast_problems(bible, shot) + _place_problems(bible, shot) + _feeling_problems(shot, declared)
         earlier = {s.id for s in shots[:n]}
         if shot.from_scene and shot.from_scene not in earlier:
             why.append(f"is made from {shot.from_scene!r}, which is not an earlier shot")
+        if shot.setup and shot.setup not in opened:
+            opened.add(shot.setup)
+            if shot.framing not in MASTER_FRAMINGS:
+                why.append(f"opens the setup {shot.setup!r} as a {shot.framing} shot: its master, the "
+                           "first shot of a setup, shows the whole arrangement, wide or medium")  # fmt: skip
         pictures = len(shot.cast) + (shot.place is not None and not shot.place_in_words)
         if pictures > limit:
             why.append(f"needs {pictures} pictures for its people and place, more than {limit}: show fewer")
