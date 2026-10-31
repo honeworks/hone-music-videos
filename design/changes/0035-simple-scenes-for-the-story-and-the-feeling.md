@@ -3,9 +3,12 @@
 ## Status
 
 `accepted (approved by the maintainer 2026-10-31: "make it a new design doc and start developing")`,
-proposed the same day after 0034's measurement. Its smaller choices are D-184 onwards. It is built in three parts: the shot focuses
-(§1 to §3), the instructions pruned (§4), and a measurement on real songs (Verification) before it is
-made the default for new plans.
+built the same day on `design/0035-simple-scenes`, **measured the same day on four real songs and not
+made the default**: the pictures were as clean (100% against 98%) and carried the feeling as often (62%
+either way), but told the song's story less often (70% against 82%), and the judges preferred the old
+plans' shot 31 to 27 ([simple-scenes-2026-10.md](../research/simple-scenes-2026-10.md)). The old plans'
+two-person shots carried the story; 0035 planned a third as many and more empty places. The decision
+whether to merge it as an option is the owner's (Results below).
 
 ## Context
 
@@ -177,6 +180,17 @@ pairwise choice. If it is not, the focuses stay an option and the reason is kept
 83. A shot list kept before 0035 reads, each shot given the focus its framing and cast imply.
 84. The retired rules are not in the instructions, and each focus is named in the shot list's, the
     review's and the scene call's.
+
+## Results (2026-10-31)
+
+| | Clean | Shows the story | Carries the feeling | Judged better |
+|---|---|---|---|---|
+| The old plans | 98% | 82% | 62% | 31 of 60 |
+| 0035 | 100% | 70% | 62% | 27 of 60 |
+
+On real songs the old plans' pictures were already clean, so simpler shots had little to gain; they
+lost some of the story the two-person shots carried. 0035 won on the calm instrumental song (10 to 4)
+and lost on the three sung ones. It fails the bar of the Verification, so it is not the default.
 
 ## Consequences
 
