@@ -64,8 +64,8 @@ def camera_problems(shots: list[FrameShot]) -> list[Problem]:
 def _review_data(
     bible: Bible, shots: list[FrameShot], lines: dict[str, str], reply: ShotList
 ) -> dict[str, Any]:
-    keep = {"id", "start_ms", "end_ms", "beat", "motion", "ends", "feel", "evidence", "framing", "camera",
-            "cast", "place", "setup", "from_scene", "takes", "place_in_words"}  # fmt: skip
+    keep = {"id", "start_ms", "end_ms", "beat", "motion", "ends", "feel", "evidence", "focus", "framing",
+            "camera", "cast", "place", "setup", "from_scene", "takes"}  # fmt: skip
     limits = [p for s in shots for p in model_limits(s.id, s.beat, s.framing)]
     return {
         "feeling": bible.feeling,

@@ -20,6 +20,8 @@ CharacterView = Literal["front", "three-quarter", "side", "back", "close", "deta
 Pose = Literal["", "sitting", "lying", "kneeling"]  # a body position a scene needs a picture of (0028)
 PlaceView = Literal["wide", "reverse", "high", "low", "close"]
 Group = Literal["demo", "characters", "objects", "places", "scenes"]
+# what a shot is of (0035): one face, one figure, two people, the place, or one thing
+Focus = Literal["face", "figure", "pair", "place", "detail"]
 
 
 # ---------------------------------------------------------------------------- call 1: the bible
@@ -134,6 +136,7 @@ class FrameShot(BaseModel):
     beat: str  # the opening frame only: what the first frame shows (0028)
     framing: Framing
     faces: bool
+    focus: Focus | None = None  # 0035; None in a reply made before it (`frame_focus.focus_of`)
     camera: str  # the camera's one move during the clip
     light: str  # the light of this moment and where it comes from
     cast: list[CastUse] = []
