@@ -58,9 +58,13 @@ def test_each_version_names_what_it_was_made_from_and_whether_it_is_used(base: s
 
     assert call(base, f"/api/projects/{project_id}/redo-clip", {"shots": ["S001"]})[0] == 200
     deadline = time.monotonic() + 20
-    while len(by_kind(versions(base, project_id, "S001")[1])["raw_clip"]) < 2 or (
-        call(base, f"/api/projects/{project_id}")[1]["status"] != "completed"
-    ):
+
+    def remade() -> bool:  # the new clip is listed, in use, and the remake's run has ended
+        clips = by_kind(versions(base, project_id, "S001")[1])["raw_clip"]
+        done = call(base, f"/api/projects/{project_id}")[1]["status"] == "completed"
+        return len(clips) >= 2 and clips[0]["in_use"] and done
+
+    while not remade():
         assert time.monotonic() < deadline, "the clip was never remade"
         time.sleep(0.05)
     kinds = by_kind(versions(base, project_id, "S001")[1])
