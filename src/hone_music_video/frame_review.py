@@ -96,5 +96,5 @@ def review_shots(
     §2): its notes as problems for the shot list's repair."""
     reviewer = dataclasses.replace(planner, model=planner.job.settings.models.review)
     data = _review_data(bible, shots, lines, reply)
-    found, _ = reviewer.call("review", system("frame_review", limits=True), data, ShotReview)
+    found, _ = reviewer.call("review", system("frame_review"), data, ShotReview)
     return [Problem(rule="feeling", where=n.where, message=n.problem) for n in found.notes if n.problem]
