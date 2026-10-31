@@ -554,16 +554,14 @@ shots and carried into every prompt. It makes the plan in several calls, each re
 1. **The story** (one call): what the whole video should make the viewer feel and its **arc** (per part
    of the song: its feel, intensity 1–5, turn and visible evidence), the characters with their looks,
    their `presence` (what the viewer should feel about them and the visible traits that do it), their
-   `inner` life (what they feel, show and leak), up to four `expressions` (what the face does for each
-   feeling the arc gives them, 0034 §3) and their variants as whole looks (a pose picture where
+   `inner` life (what they feel, show and leak) and their variants as whole looks (a pose picture where
    the owner gave one), the objects and the places (their states as whole looks). The song's shape it
    reads: per section and instrumental span, the loudness against the song, its change from the part
    before, the voice's loudness, the words per second and the lyrics' notes; the owner's feeling wins
    over the notes, the notes over the numbers.
 2. **The shot list** (one call): every shot on the song's timeline in milliseconds with its lines, its
    opening frame (`beat`), its one `motion`, what it leaves for the next (`ends`), what the viewer should
-   `feel` and the `evidence`, framing, faces, cast (a view, a `pose`, a `detail` of a part, or a close-up
-   with one of the character's `expression`s, 0034), place,
+   `feel` and the `evidence`, framing, faces, cast (a view, a `pose` or a `detail` of a part), place,
    camera, how many pictures it takes (`one`, `count` or `prompts`), the recurring arrangement it is in
    (`setup`, declared once with its layout by the people's own sides, its first shot a wide or medium
    **master**, 0034 §4) and a scene made from an earlier scene (`from_scene`, the setup's later coverage
@@ -575,7 +573,7 @@ shots and carried into every prompt. It makes the plan in several calls, each re
    limits of §8.2b with the `model-limit` warnings code found in the beats, `place_in_words` where the
    camera or a fight needs it, 0029 §2); its notes go back to the shot list as one more repair.
 3. **One call per character, object and place**: each of its pictures' prompts (hero, views, close-up,
-   expressions made from the close-up, poses, details, variants), and an item's own model when the
+   poses, details, variants), and an item's own model when the
    project lists several; repaired up to twice (0034 §5).
 4. **One call per six scenes**: each scene's **facts** first (0029 §1: every thing with its count and its
    picture, each link between two things with both ends, what must be visible, the frozen moment; not
@@ -589,9 +587,9 @@ shots and carried into every prompt. It makes the plan in several calls, each re
    beside something of known size (0029 §4). **The references are made for an edit model** (0034): the
    image model edits image 1 and takes the others as content, so a scene's pictures are its place's view
    first, then its characters, then its objects, and the scene call is told to say what changes from
-   them (where a figure stands and how large, its body and face in this instant, the light). A `wide` or
-   `extreme-wide` shot with `faces: false` takes no character picture: its people reach the scene call
-   in `in_words` with their whole looks (a `place_in_words` shot keeps its characters).
+   them (where a figure stands and how large, its body and face in this instant, the light). A wide shot
+   without faces keeps its characters' pictures behind the place (0034's J2, its people in words, lost
+   the facts and was dropped, D-182).
 
 The code checks every prompt (its references, its length, the words the limits of §8 forbid, a size or an
 aspect ratio (0034 §5), a scene's
@@ -1129,15 +1127,14 @@ start frames, 54 and 58 where they are about polish, and 59); 60 to 66 are new (
 74. A scene's references are its place's view first, then its characters, then its objects, and the
     scene call gets them numbered in that order; a `place_in_words` scene has only its characters, a
     `from_scene` scene only that scene (0034 §1; `tests/e2e/test_ac74_scene_references.py`).
-75. A `wide` or `extreme-wide` shot with `faces: false` takes no character picture: its people reach the
-    scene call as words with their looks, and no picture is made for them alone (0034 §2).
-76. A character's expressions in the bible become close-ups made from its look's neutral close-up, one
-    item per expression a shot uses; a face shot with an `expression` takes that picture; an expression
-    the bible lacks, or one on a view that is not a close-up, is a shot problem sent back (0034 §3).
+75. A `wide` or `extreme-wide` shot with `faces: false` keeps its characters' pictures behind the place
+    (0034 §2 dropped, D-182; `tests/e2e/test_ac74_scene_references.py`).
+76. (Removed with 0034 §3: expression close-ups lost the facts and did not carry the feeling, D-181.)
 77. The first shot of every setup is `wide` or `medium`, or the shot list is sent back (0034 §4).
 78. A `kind`, `finish`, demo prompt or any prompt that names a size or an aspect ratio is sent back; a
-    character with more than four expressions is sent back; a subject prompt is repaired twice before
-    what is left is kept (0034 §5).
+    subject prompt is repaired twice before what is left is kept (0034 §5).
+79. The review call sees which shots are made `from_scene` (0034 §4, D-182;
+    `tests/unit/test_still_guideline.py`).
 
 ## 15. Known limits (0.1)
 

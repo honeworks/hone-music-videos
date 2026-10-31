@@ -1,6 +1,7 @@
 # Prompt guide research, 2026-10-17/18: 100 hard cases on our still models
 
-Branch `exp/frame-scene-generation`; harness in `research/prompt-guide/`, pictures in
+Branch `exp/frame-scene-generation`; harness in `research/prompt-guide/` (local, not committed; a copy is in
+the private hone-research repository, study 0015), pictures in
 `~/hone-research/prompt-guide-2026-10/` (live grid: `research/prompt-guide/gallery.py`, port 8795).
 
 ## Question

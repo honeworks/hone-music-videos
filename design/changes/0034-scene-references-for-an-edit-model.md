@@ -2,12 +2,14 @@
 
 ## Status
 
-`accepted (approved by the maintainer 2026-10-19)`, built the same day (§1 to §5, guarantees 74 to 78;
-the harness measurement of the Verification is still to do), proposed the same day, after the overnight batch of 2026-10-19 (twelve projects, about 900 scene
-pictures) and a reading of how ComfyUI's Qwen-Image 2.1 encoder uses reference pictures. Its smaller
-choices will be D-180 onwards. Every part is measured on the harness of 0029
-(`research/prompt-guide/`, 100 cases, the same seeds) before it ships; a part that gains nothing is
-dropped from this record and the reason kept.
+`accepted (approved by the maintainer 2026-10-19)`, built the same day, **measured 2026-10-31** on the
+harness of 0029 ([design/research/scene-references-2026-10.md](../research/scene-references-2026-10.md)):
+**§1 (the place first), §4 (one master per setup) and §5 (the rule gaps) ship, with J5's rule "say what
+changes from the pictures"; §2 (a wide shot without faces in words, J2) and §3 (expression close-ups,
+J3) are dropped; J4 (`<image1>` tags) is not taken.** The reasons are in "Results" below and D-181 to
+D-183. Proposed 2026-10-19 after the overnight batch (twelve projects, about 900 scene pictures) and a
+reading of how ComfyUI's Qwen-Image 2.1 encoder uses reference pictures. The *Dancing with a Ghost*
+end-to-end run was dropped by the owner (2026-10-31).
 
 ## Context
 
@@ -95,7 +97,7 @@ Unchanged: a `place_in_words` scene (0029 §3) still has only its characters; a 
 has that scene alone; the objects past the limit are still words. The limit of four pictures stays. The
 facts' `image` numbers follow the new order.
 
-### 2. A wide shot without faces takes no character picture
+### 2. A wide shot without faces takes no character picture (dropped after measuring, D-182)
 
 When a shot's `faces` is false and its framing is `wide` or `extreme-wide`, its scene takes **the place
 picture only** (and its objects, within the limit). Its people reach the scene call in `in_words`, each
@@ -110,7 +112,7 @@ shot: at that distance a face cannot be recognised anyway (§8.3), a costume is 
 in words, and a creature's size is the plain measure the bible writes for it (0029 §4). A shot that needs
 the exact look is planned closer; if J2 shows wrong costumes in wide shots, the flag is the next record.
 
-### 3. Expression close-ups
+### 3. Expression close-ups (dropped after measuring, D-181)
 
 The bible gives every character up to **four `expressions`** (`id`, `face`: what the face does, as the
 Faces guide writes it: eyes, brows, mouth held, jaw), the distinct feelings the arc gives that character,
@@ -204,6 +206,26 @@ problem), its storyboard beside the old one.
 - `tests/frame/`: nothing; the project file stays a Hone Frame file (an expression close-up is an item
   with one ref).
 - The harness results go to `design/research/scene-references-2026-10.md` with the pictures' folder.
+
+## Results (2026-10-31)
+
+Measured on the 0029 harness: 20 stories, 100 cases, 415 checks, one seed a case; the scene calls the
+product's own, answered by clean agents for every arm alike; scored blind by Haiku agents with the arms
+shuffled under letters, plus a "posed" mark for a figure pasted in from a studio reference. Details and
+every table: [scene-references-2026-10.md](../research/scene-references-2026-10.md).
+
+| Part | Measured | Verdict |
+|---|---|---|
+| J1, §1 the place first | 78 cases: checks 75% → 77%, pictures fully right 27% → 38%; pose +5, scale +6, gaze +14 | ships |
+| J2, §2 people in words | 22 cases: checks 82% → 68%, fully right 50% → 23% (posed 27% → 5%); the place first with the characters kept: the control's checks, more fully right | dropped (D-182) |
+| J3, §3 expressions | 17 cases: checks 73% → 66%; the emotion checks unchanged; scale and camera broken by the close-up | dropped (D-181) |
+| J4, `<image1>` tags | pilot: 78% either way | not taken (D-183) |
+| J5, "say what changes" | pilot: without it the facts are the same and posed figures 15% → 40% | ships |
+| §4, masters | 10 batch projects: masters 23/26 → 24/24, shots `from_scene` 4 → 17 | ships, with two fixes (D-182) |
+| §5, rule gaps | unit tests | ships |
+
+Checks passed stay between 75% and 78% under every arm, as in 0029: the ceiling is the shot, not the
+references or the words. That is the next change.
 
 ## Consequences
 
