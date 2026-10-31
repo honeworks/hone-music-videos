@@ -114,8 +114,10 @@ Each rule is said once, in the call that acts on it:
 - The guide's sections are sent only where a call needs them (Hone Frame's guide stays word for word,
   0026).
 
-Target: the planner's own instructions at about half their length, with a test that the retired rules
-are gone and every focus is named in the shot list's, the review's and the scene call's instructions.
+Built: the shot list's instructions 2,930 → 2,348 words with its limits, the review's 1,596 → 594 (it no
+longer gets the limits); the scene call gains the recipes and keeps Hone Frame's guide (D-184). A test
+checks that the retired rules are gone and every focus is named in the shot list's, the review's and
+the scene call's instructions.
 
 ### 5. What a shot looks like
 

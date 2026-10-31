@@ -2761,3 +2761,25 @@ reads: the records ignore fields they do not know. Guarantee 76 is removed.
 
 On the pilot's 20 cases, the same prompts with `<image1>` for "image 1" passed 78% of the checks, as
 "image 1" did, with as many pictures fully right. The prompts keep "image 1".
+
+## D-184: how 0035 is built  (2026-10-31, 0035)
+
+**Status:** accepted (implementation detail of 0035, approved with it).
+
+- **`focus`, not `kind`.** The bible already has a `kind` (the kind of picture every prompt begins with)
+  and characters have a `kind`; a shot's simple picture is its `focus`.
+- **An older shot's focus** comes from its framing and cast, in this order: an insert or a `detail` view
+  is a `detail`; no cast is a `place`; two or more characters a `pair`; a `close` view or a close-up
+  framing a `face`; anything else a `figure`. Stored replies are never rewritten.
+- **The views follow the focus after the reply**: a `face`'s character gets the close-up (no pose, no
+  part), a `detail`'s character the detail of its part; the shot list chooses views only for a `figure`
+  and a `pair`.
+- **`faces` stays the shot list's choice** within the existing check (medium or closer); a `place` or a
+  `detail` with `faces` true is sent back.
+- **The review no longer gets the models' limits**: the focuses plan around them, and code's
+  `model-limit` findings still reach it as `code_found`.
+- **Hone Frame's guide stays in the scene call.** The planner's own instructions are shorter (the shot
+  list 2,930 → 2,348 words with its limits, the review 1,596 → 594), and every focus has one recipe; the
+  guide's Scenes section is kept word for word (0026) because the 0034 measurement used it.
+- `place_in_words` and `takes: "prompts"` are still read and still work in an older plan; a 0035 shot
+  list is not told about them.

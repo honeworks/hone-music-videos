@@ -14,7 +14,8 @@ lists the guarantees the tests check. Why the design looks like this:
 
 **Status:** the design (0001) is `accepted` (2026-10-10); milestones M1 to M6 and changes 0002 to 0008, 0014, 0020, 0021, 0022, 0024 and 0025 are built (0.1, not released). 0026, 0027 (Hone Frame is the only scene pipeline, re-implemented in `hone_music_video.frame`), 0028 (feeling-first planning, takes overnight, the overnight queue) 0029 (the still models' prompt guideline) 0030 (the Scenes board, the planner's calls, line starts from the heard words) 0031 (clips only for the picked takes), 0032 (lines the aligner lost timed from the heard words) and 0033 (one prompt at a time) are built (experimental; merged to `main` on 2026-10-18). 0034 (scene
 references made for an edit model: the place first, one master per setup) is built and measured
-(2026-10-31; its wide-shots-in-words and expression parts were dropped).
+(2026-10-31; its wide-shots-in-words and expression parts were dropped). 0035 (simple scenes: every shot
+has one focus) is built on `design/0035-simple-scenes`; its measurement on real songs is under way.
 Do not implement anything the owner has not accepted.
 
 ## Commands
@@ -45,7 +46,7 @@ scripts/gpu-lock.sh uv run pytest -m gpu   # real-model tests, under the machine
 | `pace.py` | the pace's preferred shot length and its `pace` warning (0009, D-084) |
 | `stages_plan.py`, `stages_make.py` | stages 1 to 3 as plain functions (§3.1); clips, finishing and assembly |
 | `frame/` | Hone Frame's behaviour re-implemented (0027 §1): the project file and its checks, write-back with tomlkit, marks, the runner (holds, picks, the demo first, pause and stop), actions with dependants, versions, estimates, notifications, Pillow sheets, the views and the JSON API the Scenes view calls, the guide; `frame/models.py` puts the library's `Models` behind it; each module names the Hone Frame code it is ported from |
-| `frame_plan.py`, `frame_calls.py`, `frame_prompts.py`, `frame_facts.py`, `frame_items.py`, `frame_toml.py` | the planner (0027 §3): the plan in several calls (story, shot list, one per subject, one per six scenes), each reply kept and checked; the prompts' checks; a scene's facts checked against its prompts (0029); the items each subject needs (poses and details too, 0028), worked out by code; the plan as a Hone Frame project file |
+| `frame_plan.py`, `frame_calls.py`, `frame_prompts.py`, `frame_facts.py`, `frame_items.py`, `frame_focus.py`, `frame_toml.py` | the planner (0027 §3); a shot's focus checked and its views set (0035): the plan in several calls (story, shot list, one per subject, one per six scenes), each reply kept and checked; the prompts' checks; a scene's facts checked against its prompts (0029); the items each subject needs (poses and details too, 0028), worked out by code; the plan as a Hone Frame project file |
 | `music.py`, `frame_review.py` | the song's shape measured per part with ffmpeg and numpy (0028 §1); the arc and camera checks and the review call that reads the shot list for the feeling (0028 §2) |
 | `frame_stages.py` | stage 5's install of the plan, stage 7 (`scenes`: the frame run driven, paused, stopped), the scenes in use as start frames, the dashboard's frame runners |
 | `_shot_jobs.py` | what stages 8 and 9 share: a shot's folder, its job, making them (D-005) |

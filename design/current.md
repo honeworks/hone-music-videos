@@ -560,6 +560,9 @@ shots and carried into every prompt. It makes the plan in several calls, each re
    before, the voice's loudness, the words per second and the lyrics' notes; the owner's feeling wins
    over the notes, the notes over the numbers.
 2. **The shot list** (one call): every shot on the song's timeline in milliseconds with its lines, its
+   **focus** (0035: `face`, `figure`, `pair`, `place` or `detail`, one simple picture whose feeling has
+   one carrier; code checks the characters and framings each allows and gives a face its close-up and a
+   detail its part; a shot planned before 0035 gets the focus its framing and cast imply), its
    opening frame (`beat`), its one `motion`, what it leaves for the next (`ends`), what the viewer should
    `feel` and the `evidence`, framing, faces, cast (a view, a `pose` or a `detail` of a part), place,
    camera, how many pictures it takes (`one`, `count` or `prompts`), the recurring arrangement it is in
@@ -1135,6 +1138,16 @@ start frames, 54 and 58 where they are about polish, and 59); 60 to 66 are new (
     subject prompt is repaired twice before what is left is kept (0034 §5).
 79. The review call sees which shots are made `from_scene` (0034 §4, D-182;
     `tests/unit/test_still_guideline.py`).
+80. Every planned shot has one of the five focuses; a shot whose cast, framing or faces its focus does
+    not allow is sent back (0035 §1; `tests/unit/test_focus.py`, `tests/e2e/test_ac80_simple_scenes.py`).
+81. A shot's references follow its focus: a `face` the place and the character's close-up, a `detail` the
+    character's part (0035 §1; `tests/unit/test_focus.py`).
+82. The scene and review calls are given each shot's focus (0035 §3; `test_ac80_simple_scenes.py`).
+83. A shot list kept before 0035 reads, each shot given the focus its framing and cast imply (0035 §6;
+    `tests/unit/test_focus.py`).
+84. The shot list's, review's and scene call's instructions name every focus; the retired rules
+    (`place_in_words`, hard moments, three-person casts) are not in the shot list's (0035 §4;
+    `test_ac80_simple_scenes.py`).
 
 ## 15. Known limits (0.1)
 

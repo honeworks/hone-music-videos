@@ -8,6 +8,15 @@ design changed is in [`design/changes/`](design/changes/).
 
 ### Added
 
+- **Experimental: simple scenes for the story and the
+  feeling** ([0035](design/changes/0035-simple-scenes-for-the-story-and-the-feeling.md)). Every shot
+  is now one simple picture with one focus: a face, a figure in its place, a pair of people, the place
+  alone, or one detail. The planner tells the song's story as a sequence of these, comes closer as the
+  song grows stronger, and carries the feeling in the one thing each focus shows (the eyes, the posture,
+  the distance between two, the light, the state of a thing). Fights, crowds and other moments the image
+  models draw badly become a sequence of simple shots instead of one hard picture. Code checks each
+  shot's focus, and the planner's instructions are shorter. Re-plan a project to use it.
+
 - **Experimental: scene references made for an edit
   model** ([0034](design/changes/0034-scene-references-for-an-edit-model.md)). Qwen-Image 2.1 edits its
   first picture and takes the others as content, so every scene now gives the place first, then the
