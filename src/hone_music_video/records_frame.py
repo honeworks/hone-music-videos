@@ -36,14 +36,6 @@ class FrameVariant(BaseModel):
     pose: str = ""  # the name of a given pose picture the variant's body takes
 
 
-class Expression(BaseModel):
-    """A feeling the arc gives a character, as what the face does (0034 §3): a close-up made from its
-    look's neutral close-up, for the face shots that name it."""
-
-    id: str
-    face: str  # the eyes, the brows, the mouth held, the jaw: "her eyes wide, brows drawn up, lips pressed"
-
-
 class FrameCharacter(BaseModel):
     """Someone on screen: a person, an animal or a creature, with the whole visible look of its hero."""
 
@@ -56,7 +48,6 @@ class FrameCharacter(BaseModel):
     variants: list[FrameVariant] = []
     presence: str = ""  # what the viewer should feel about them, and the visible traits that do it (0028)
     inner: str = ""  # what they feel, what they show, and how the feeling leaks, visibly (0028)
-    expressions: list[Expression] = []  # up to four, for the face shots (0034 §3)
 
 
 class FrameObject(BaseModel):
@@ -123,7 +114,6 @@ class CastUse(BaseModel):
     view: CharacterView = "front"  # the side the shot sees; `close` for a face shot; `detail` for a part
     pose: Pose = ""  # its body position, when the scene needs a picture of it (0028)
     part: str = ""  # with `view: "detail"`: the part the frame shows ("the snake on his left shoulder")
-    expression: str = ""  # with `view: "close"`: one of the character's expressions; "" the neutral face
 
 
 class PlaceUse(BaseModel):

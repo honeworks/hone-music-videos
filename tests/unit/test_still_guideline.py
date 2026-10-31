@@ -172,6 +172,22 @@ def test_the_limits_found_in_the_beats_go_to_the_review(project: hmv.Project) ->
     assert "'RIGHT hand'" in found[0]["message"] and "'five moths'" in found[1]["message"]
 
 
+def test_the_review_sees_which_shots_are_made_from_a_scene(project: hmv.Project) -> None:
+    reviewed: list[dict[str, Any]] = []
+
+    def shots(data: Mapping[str, Any]) -> dict[str, Any]:
+        answer = shots_answer(data)
+        answer["shots"][1]["from_scene"] = answer["shots"][0]["id"]
+        return answer
+
+    def review(data: Mapping[str, Any]) -> dict[str, Any]:
+        reviewed.append(dict(data))
+        return {"notes": []}
+
+    drive(project, FakeModels(answers={"ShotReview": review, "ShotList": shots}))
+    assert [s["from_scene"] for s in reviewed[0]["shots"][:2]] == ["", "S001"]  # the master check (0034 §4)
+
+
 # ------------------------------------------------------------------------------ §3 the place in words
 
 
@@ -179,7 +195,7 @@ def test_an_extreme_camera_or_a_creature_fight_gets_the_place_in_words() -> None
     plain, in_words = shot(), shot(place_in_words=True)
     assert scene_refs(bible(), plain) == ["pass.dusk", "ember.hero", "dragon.hero"]
     wide = {"framing": "wide", "faces": False}
-    assert scene_refs(bible(), shot(**wide)) == ["pass.dusk"]  # people in words (0034 §2)
+    assert scene_refs(bible(), shot(**wide)) == ["pass.dusk", "ember.hero", "dragon.hero"]  # D-182
     assert scene_refs(bible(), shot(**wide, place_in_words=True)) == ["ember.hero", "dragon.hero"]
     assert scene_refs(bible(), in_words) == ["ember.hero", "dragon.hero"]
     data = _shot_data(bible(), [in_words], 0, Context(lines={}))
@@ -204,9 +220,8 @@ def test_a_creatures_size_is_drawn_in_its_reference() -> None:
 def test_the_calls_are_told_how_an_edit_model_reads_the_pictures() -> None:
     assert "The place comes first" in SCENES and "Say what changes from the pictures" in SCENES
     assert "in the oasis from image 1, the hero from image 2" in SCENES.lower()
-    assert "gets no picture of its people" in SHOTS and "The first shot of a setup is its master" in SHOTS
-    assert "`expression`" in SHOTS and "`expressions`" in BIBLE and "up to four" in BIBLE
-    assert "**An expression**" in ASSETS
+    assert "gets no picture of its people" not in SHOTS and "The first shot of a setup is its master" in SHOTS
+    assert "`expression`" not in SHOTS and "`expressions`" not in BIBLE + REVIEW  # J3 dropped (0034 §3)
     assert "made `from_scene` the master" in REVIEW
     for text in (SCENES, ASSETS):
         assert "write the project's `kind` instead" in text

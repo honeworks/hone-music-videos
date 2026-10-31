@@ -26,8 +26,8 @@ Follow the Scenes section of the guide below (Hone Frame's prompt guide), and th
   - `refs`: its pictures in order, `{"image": n, "id": ..., "what": ...}` (`what` says who or what it
     is, the view it shows and the look to keep). **The place comes first**: image 1 is the place's
     view when the shot has one, then the characters, then the objects;
-  - `in_words`: who or what the frame holds without a picture (a place, an object, or the people of a
-    wide shot without faces, each with the whole look from the bible), with their description;
+  - `in_words`: who or what the frame holds without a picture (a place or an object described in
+    words), with their description;
   - `before`: what the shot before left (where people are, what they hold, what changed), and `after`:
     the next shot's opening frame, for continuity.
 
@@ -66,9 +66,6 @@ Write it from the facts, in this order, in plain sentences:
    the pictures (a stain, wet hair, a time of day; what is not said, the picture wins; continuity short:
    "Same face and leopard vest as image 2"), follow the `setup`'s layout and the `before`. When the place
    has no picture, say where it is, fully: the ground, the background and the light, from `in_words`.
-   When the people have no picture (a wide shot without faces), describe each from `in_words` by what
-   reads at that distance (the build, the main garment and its colour, the one or two large things of
-   their own), their number and where they are in the frame, small.
 3. **The framing and the camera**: "A medium shot from the waist up at eye level, 50mm lens", "Wide
    low-angle shot, 24mm lens". One shot. A face that must be recognised needs a medium shot or closer; in
    a wide shot show people small, from behind or turned away.

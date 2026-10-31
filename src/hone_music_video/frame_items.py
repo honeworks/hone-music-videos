@@ -6,8 +6,8 @@ The items follow Hone Frame's guide: a character's hero (the whole figure from t
 from the side) on the reference backdrop, then the views, close-ups and variants the shots use, each made
 from the hero; an object's hero; a place's wide view empty of people, then its other views and states.
 A scene's references are the place's view matching the camera first (the model edits image 1, 0034 §1),
-then one picture per character (the view the shot sees, a close-up or an expression in a face shot), then
-the objects; a wide shot without faces has its people in words (0034 §2)."""
+then one picture per character (the view the shot sees, a close-up in a face shot), then
+the objects."""
 
 from __future__ import annotations
 
@@ -36,9 +36,7 @@ MAX_SCENE_REFS = 4  # three to five references drew a character twice most often
 SCENE_SIZES = {"16:9": "1664x928", "9:16": "928x1664", "1:1": "1328x1328", "4:5": "704x880"}
 PERSON_SIZE, ANIMAL_SIZE, SQUARE = "832x1248", "1536x1024", "1024x1024"
 FACE_FRAMINGS = ("medium", "close-up", "extreme-close-up")
-WIDE_FRAMINGS = ("wide", "extreme-wide")  # without faces: the people in words, no picture of them (0034 §2)
 MASTER_FRAMINGS = ("wide", "medium")  # the first shot of a setup shows the whole arrangement (0034 §4)
-MAX_EXPRESSIONS = 4
 BODY_VIEWS: tuple[CharacterView, ...] = ("three-quarter", "side", "back", "front")
 PLACE_VIEWS: tuple[PlaceView, ...] = ("wide", "reverse", "high", "low", "close")
 VIEW_WORDS = {
@@ -58,8 +56,6 @@ HERO_ROLES = {
     "other": "the hero: the whole body in full side view, standing square, all of it in the frame",
 }
 CLOSE_ROLE = "the neutral close-up made from image 1: head and shoulders fill the frame, a calm face"
-EXPRESSION_ROLE = "an expression made from the neutral close-up, image 1: {face}; the same face, head and \
-shoulders filling the frame"
 # a pose picture made in words from the look's picture (0028; Hone Frame's guide, Poses), and its size
 POSE_WORDS = {
     "sitting": "sitting, the whole figure, as the shots that use it need",
@@ -95,9 +91,6 @@ def normalized(bible: Bible) -> Bible:
         names = _unique((v.id for v in character.variants), "look")
         for variant, name in zip(character.variants, names, strict=True):
             variant.id = name
-        faces = _unique((e.id for e in character.expressions), "face")
-        for expression, name in zip(character.expressions, faces, strict=True):
-            expression.id = name
     for place in bible.places:
         for state, name in zip(place.states, _unique((s.id for s in place.states), "state"), strict=True):
             state.id = name
@@ -110,15 +103,12 @@ def hero_view(character: FrameCharacter) -> CharacterView:
 
 
 def character_item(character: FrameCharacter, use: CastUse) -> str:
-    """The id of the picture a shot gets of a character: its hero, a view, its close-up or an expression
-    (`<look>-close-<expression>`, 0034), a variant, a pose (`<look>-lying`) or a detail
-    (`<look>-detail-<part>`, 0028); a pose wins over a body view."""
+    """The id of the picture a shot gets of a character: its hero, a view, its close-up, a variant, a
+    pose (`<look>-lying`) or a detail (`<look>-detail-<part>`, 0028); a pose wins over a body view."""
     base = f"{character.id}.{use.variant}" if use.variant else f"{character.id}.hero"
     prefix = f"{character.id}.{use.variant}-" if use.variant else f"{character.id}."
     if use.view == "detail":
         return f"{prefix}detail-{slug(use.part, 'part')}"
-    if use.view == "close" and use.expression:
-        return f"{prefix}close-{slug(use.expression, 'face')}"
     if use.pose and use.view != "close":
         return f"{prefix}{use.pose}"
     if use.view == hero_view(character):
@@ -138,24 +128,16 @@ def object_item(object_id: str) -> str:
     return f"{object_id}.hero"
 
 
-def people_in_words(shot: FrameShot) -> bool:
-    """A wide shot without faces: its people are words in the scene, never pictures (0034 §2); a shot
-    that wants its place in words keeps its characters (0029 §3)."""
-    return not shot.faces and shot.framing in WIDE_FRAMINGS and not shot.place_in_words
-
-
 def scene_refs(bible: Bible, shot: FrameShot, limit: int = MAX_SCENE_REFS) -> list[str]:
     """A scene's references in order: the place's view first, the picture the model edits (0034 §1;
-    none when the shot wants the place in words, 0029 §3), each character's picture (none in a wide
-    shot without faces, 0034 §2), the objects; the objects past `limit` are left to the words. A scene
-    made from a scene has that scene only (0027; Hone Frame's guide, "A scene made from another
-    scene")."""
+    none when the shot wants the place in words, 0029 §3), each character's picture, the objects; the
+    objects past `limit` are left to the words. A scene made from a scene has that scene only (0027;
+    Hone Frame's guide, "A scene made from another scene")."""
     if shot.from_scene:
         return [shot.from_scene]
     characters = {c.id: c for c in bible.characters}
     refs = [place_item(shot.place)] if shot.place and not shot.place_in_words else []
-    if not people_in_words(shot):
-        refs += [character_item(characters[u.character], u) for u in shot.cast if u.character in characters]
+    refs += [character_item(characters[u.character], u) for u in shot.cast if u.character in characters]
     kept = len(dict.fromkeys(refs))
     refs += [object_item(o) for o in shot.objects]
     return list(dict.fromkeys(refs))[: max(limit, kept)]
@@ -180,23 +162,9 @@ def _cast_problems(bible: Bible, shot: FrameShot) -> list[str]:
             found.append(f"uses {use.character}'s close-up in a {shot.framing} shot; give a full-body view")
         if use.view == "detail" and not use.part.strip():
             found.append(f"uses a detail of {use.character} without its `part`: name the part it shows")
-        found += _expression_problems(character, use)
     who = [u.character for u in shot.cast]
     found += [f"names {c} twice: one picture per character" for c in dict.fromkeys(who) if who.count(c) > 1]
     return found
-
-
-def _expression_problems(character: FrameCharacter, use: CastUse) -> list[str]:
-    """An expression on a view that is not a close-up, or one the bible does not give the character."""
-    if not use.expression:
-        return []
-    if use.view != "close":
-        return [f"gives {use.character} the expression {use.expression!r} on a {use.view} view: only a close"]
-    known = [e.id for e in character.expressions]
-    if use.expression not in known:
-        theirs = ", ".join(known) or "none"
-        return [f"gives {use.character} the expression {use.expression!r}; theirs: {theirs}"]
-    return []
 
 
 def _place_problems(bible: Bible, shot: FrameShot) -> list[str]:
@@ -229,8 +197,8 @@ def shot_problems(
 ) -> list[Problem]:
     """What a shot list names that the bible does not have, scenes with more pictures than `limit` for
     their people and place (objects past it are left to the words), a scene made from a scene that is
-    not an earlier one, a shot without its feeling, evidence or motion (0028), an expression the bible
-    lacks, and a setup whose first shot is not its master (0034)."""
+    not an earlier one, a shot without its feeling, evidence or motion (0028), and a setup whose first
+    shot is not its master (0034)."""
     found: list[Problem] = []
     declared = set(setups)
     opened: set[str] = set()
@@ -244,8 +212,7 @@ def shot_problems(
             if shot.framing not in MASTER_FRAMINGS:
                 why.append(f"opens the setup {shot.setup!r} as a {shot.framing} shot: its master, the "
                            "first shot of a setup, shows the whole arrangement, wide or medium")  # fmt: skip
-        cast = 0 if people_in_words(shot) else len(shot.cast)
-        pictures = cast + (shot.place is not None and not shot.place_in_words)
+        pictures = len(shot.cast) + (shot.place is not None and not shot.place_in_words)
         if pictures > limit:
             why.append(f"needs {pictures} pictures for its people and place, more than {limit}: show fewer")
         found += [Problem(rule="frame-shot", where=shot.id, message=m) for m in why]
@@ -308,16 +275,8 @@ def _look_items(a: Assets, c: FrameCharacter, variant: str, parent: str, size: s
             role = f"a view made from image 1: {VIEW_WORDS[view]}"
             items.append(a.item("characters", item_id, role, size=size, refs=[parent]))
     close = character_item(c, CastUse(character=c.id, variant=variant, view="close"))
-    faces = [
-        (character_item(c, CastUse(character=c.id, variant=variant, view="close", expression=e.id)), e.face)
-        for e in c.expressions
-    ]
-    faces = [(item_id, face) for item_id, face in faces if item_id in a.used]
-    if close in a.used or faces:
+    if close in a.used:
         items.append(a.item("characters", close, CLOSE_ROLE, size=SQUARE, refs=[parent]))
-    for item_id, face in faces:
-        role = EXPRESSION_ROLE.format(face=face)
-        items.append(a.item("characters", item_id, role, size=SQUARE, refs=[close]))
     poses: tuple[Pose, ...] = ("sitting", "lying", "kneeling")
     for pose in poses:
         item_id = character_item(c, CastUse(character=c.id, variant=variant, pose=pose))

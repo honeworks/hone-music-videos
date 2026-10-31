@@ -87,19 +87,11 @@ your list for the feeling and may send it back with notes.
     on his left shoulder", "her right hand"). The angle of a reference is copied: a front picture for a
     shot from behind gives a person facing the wrong way, a face close-up for a shot of a hand gives a
     face.
-  - `expression`: with `close`, one of the character's `expressions` when the face must show that
-    feeling, else `""` (the neutral face). The scene then gets the close-up with that face: a face drawn
-    from a neutral picture comes out neutral, whatever the prompt says.
   - `pose`: `sitting`, `lying` or `kneeling` when the shot shows the body in that position (else `""`):
     the scene then gets a picture of the character in that pose, made from their look; a standing
     picture for a figure lying in bed is drawn standing. Not with `close` or `detail`.
   A character far in the background, a crowd or extras are words in the beat, not cast. Name the number
   of people the frame holds in the beat ("the girl, alone at the counter").
-  **A `wide` or `extreme-wide` shot with `faces: false` gets no picture of its people**: the image model
-  edits the first picture it is given, and a figure standing on a grey backdrop comes out large and
-  posed. Its cast is described in words from the bible's looks, so give it the one or two large things
-  that keep a character recognisable at that distance in the beat (the striped coat, the white horse).
-  When the exact look matters, plan the shot closer.
 - `place`: the place of the shot and the view **whose camera matches the shot's**: `wide` (the place's
   main viewpoint), `reverse` (from the opposite side), `high` (looking down), `low` (looking up),
   `close` (a closer view of a part of it); `state`: one of the place's states, else `""` (its own
@@ -111,8 +103,7 @@ your list for the feeling and may send it back with notes.
   the place in words (a place picture fixes the camera to its own and crowds a fight). Keep `place` set;
   else false.
 - `objects`: the bible's objects the frame shows (ids).
-- Everything together within `max_pictures`: the place first, one per character (none in a wide shot
-  without faces), one per object.
+- Everything together within `max_pictures`: the place first, one per character, one per object.
   Fewer pictures draw better: give a scene only what it shows.
 - `takes`: how many pictures the scene gets; they are all made overnight with their clips, and the
   owner may swap one in later:

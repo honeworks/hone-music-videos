@@ -1,6 +1,6 @@
-"""AC-74 to AC-78 (change 0034): scene references designed for an edit model. The place is image 1; a wide
-shot without faces takes no character picture; expressions are close-ups made from the neutral close-up;
-every setup opens on a master; size words are sent back and a subject prompt is repaired twice."""
+"""AC-74, AC-75, AC-77 and AC-78 (change 0034): scene references designed for an edit model. The place is
+image 1, a wide shot without faces too; every setup opens on a master; size words are sent back and a
+subject prompt is repaired twice."""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ from hone_music_video.testing.frame_answers import FRAME_ANSWERS, bible_answer, 
 from tests.conftest import LYRICS
 
 pytestmark = pytest.mark.e2e
-DREAD = {"id": "dread", "face": "her eyes wide and fixed on the doorway, brows drawn up, lips pressed"}
 
 
 @pytest.fixture
@@ -26,20 +25,6 @@ def project(tmp_path: Path) -> hmv.Project:
     return hmv.create_project(
         tmp_path / "projects", "Walk", make_song(tmp_path / "song.wav", 40_000), hmv.Material(lyrics=LYRICS)
     )
-
-
-def with_dread(data: Mapping[str, Any]) -> dict[str, Any]:
-    answer = bible_answer(data)
-    answer["characters"] = [answer["characters"][0] | {"expressions": [DREAD]}]
-    return answer
-
-
-def dread_on_s003(data: Mapping[str, Any]) -> dict[str, Any]:
-    answer = shots_answer(data)
-    third = answer["shots"][2]
-    third |= {"framing": "close-up", "faces": True, "place": {"place": "street", "view": "wide", "state": ""}}
-    third["cast"] = [{"character": "singer", "view": "close", "expression": "dread"}]
-    return answer
 
 
 def to_plan(project: hmv.Project, models: FakeModels) -> dict[str, Any]:
@@ -67,33 +52,13 @@ def test_ac74_the_place_is_image_1(project: hmv.Project) -> None:
     assert [(r["image"], r["id"]) for r in sent] == [(1, "street.wide"), (2, "singer.close")]
 
 
-def test_ac75_a_wide_shot_without_faces_takes_no_character_picture(project: hmv.Project) -> None:
+def test_ac75_a_wide_shot_without_faces_keeps_its_character_pictures(project: hmv.Project) -> None:
     models = FakeModels()
     plan = to_plan(project, models)
-    wide = plan["scenes"]["S002"]  # wide, faces false: the street at night and the lamp only
-    assert wide["refs"] == ["street.night", "lamp.hero"]
+    wide = plan["scenes"]["S002"]  # wide, faces false: the street at night, then the woman, then the lamp
+    assert wide["refs"] == ["street.night", "singer.back", "lamp.hero"]
     words = scene_data(models)["S002"]["in_words"]
-    assert any(w["what"].startswith("Mara") and "red wool coat" in w["look"] for w in words)
-    assert "image 3" not in wide.get("prompt", "")
-    assert "back" not in plan["characters"]["singer"]  # no shot uses her back view any more
-
-
-def test_ac76_an_expression_is_a_close_up_made_from_the_neutral_one(project: hmv.Project) -> None:
-    models = FakeModels(answers=FRAME_ANSWERS | {"Bible": with_dread, "ShotList": dread_on_s003})
-    plan = to_plan(project, models)
-    singer = plan["characters"]["singer"]
-    assert singer["close-dread"]["refs"] == ["singer.close"] and singer["close-dread"]["size"] == "1024x1024"
-    assert plan["scenes"]["S003"]["refs"] == ["street.wide", "singer.close-dread"]
-    roles = [i for c in models.calls_of("plan") if c.schema == "ItemPrompts" for i in c.data["items"]]
-    assert any(i["id"] == "singer.close-dread" and "lips pressed" in i["role"] for i in roles)
-
-
-def test_ac76_an_expression_the_bible_lacks_is_sent_back(project: hmv.Project) -> None:
-    models = FakeModels(answers=FRAME_ANSWERS | {"ShotList": dread_on_s003})
-    to_plan(project, models)
-    asked = [c.data for c in models.calls_of("plan") if c.schema == "ShotList"]
-    assert len(asked) > 1
-    assert any("expression 'dread'" in p["message"] for p in asked[1]["problems"])
+    assert not [w for w in words if w["what"].startswith("Mara")]
 
 
 def test_ac77_every_setup_opens_on_a_master(project: hmv.Project) -> None:
