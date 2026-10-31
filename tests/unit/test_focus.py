@@ -36,6 +36,7 @@ def shot(framing: Framing, cast: list[CastUse], **more: Any) -> FrameShot:
         ("place", "extreme-wide", [], ""),
         ("place", "wide", [DARVIN], "1 characters"),
         ("detail", "insert", [], ""),
+        ("detail", "insert", [DARVIN, EMBER, DARVIN], "3 characters"),
     ],
 )
 def test_each_focus_holds_its_characters_and_framings(

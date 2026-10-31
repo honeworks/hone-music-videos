@@ -60,7 +60,7 @@ checks it.
 | `figure` | one character, the whole body or from the waist, in the place | medium to wide | the posture, where the body is in the frame, what it does with its hands, the light on it | the place, the character's view or pose |
 | `pair` | two characters, apart or in gentle contact (a hand on a shoulder, side by side) | medium or wide, eye level | the distance between them, who looks at whom or away, who leans | the place, both characters |
 | `place` | the place, no character (figures too small to matter are words) | wide or extreme-wide | the light, the weather, the emptiness, what moves | the place in its state |
-| `detail` | one thing filling the frame: an object, a hand, a part of a character | insert or extreme close-up | the thing itself and what has happened to it | the object, or the character's detail |
+| `detail` | one thing filling the frame: an object, a hand, a part of a character, or the touching parts of two | insert or extreme close-up | the thing itself and what has happened to it | the object, or the character's detail |
 
 - A shot that would need anything else (a fight with contact, a crowd that matters, three people,
   creatures against each other, a straight-down or worm's-eye view) is **planned as a focus instead**: the
@@ -68,7 +68,8 @@ checks it.
   `place` with the crowd small. The focuses are how the six limits are planned around, as plans, not
   rules (0029 §2 stays as the reason, in one place).
 - **Code checks the focus** (a shot problem sent back): the number of characters in `cast` (`face` 1,
-  `figure` 1, `pair` 2, `place` 0, `detail` 0 or 1), the framing the focus allows, no `faces` on a
+  `figure` 1, `pair` 2, `place` 0, `detail` 0 to 2: the touching parts of two people, the way 0029 plans
+  a grip), the framing the focus allows, no `faces` on a
   `place` or a `detail`, a `detail` with a character naming its `part`. The view follows
   the focus (`face` → `close`; `detail` → `detail`), so the shot list no longer chooses it for them.
 - `place_in_words`, `takes: "prompts"`, three-person casts and the hard-moment list are retired: a focus

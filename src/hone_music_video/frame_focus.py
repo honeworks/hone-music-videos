@@ -8,7 +8,7 @@ from hone_music_video.records_frame import Focus, FrameShot
 
 FOCUSES: tuple[Focus, ...] = ("face", "figure", "pair", "place", "detail")
 # how many characters each focus holds, at least and at most
-CAST = {"face": (1, 1), "figure": (1, 1), "pair": (2, 2), "place": (0, 0), "detail": (0, 1)}
+CAST = {"face": (1, 1), "figure": (1, 1), "pair": (2, 2), "place": (0, 0), "detail": (0, 2)}
 FRAMINGS = {
     "face": ("medium", "close-up", "extreme-close-up"),
     "figure": ("medium", "wide", "extreme-wide"),
@@ -50,7 +50,7 @@ def focus_problems(shot: FrameShot) -> list[str]:
         found.append(f"is a {shot.focus} in a {shot.framing} framing; a {shot.focus} is {allowed}")
     if shot.faces and shot.focus in ("place", "detail"):
         found.append(f"is a {shot.focus} with `faces` true: no face is recognised in it")
-    if shot.focus == "detail" and shot.cast and not shot.cast[0].part.strip():
+    if shot.focus == "detail" and any(not u.part.strip() for u in shot.cast):
         found.append("is a detail of a character without its `part`: name the part that fills the frame")
     return found
 
